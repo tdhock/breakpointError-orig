@@ -1,0 +1,1486 @@
+\documentclass{jsfds} %autoloads graphicx
+
+% latin1 encoding is strongly adviced; 
+\usepackage[latin1]{inputenc}
+% If you are using utf8 encoding, please note that jsfds.sty and jsfds.cls have
+% be converted into utf8 encoding as well
+%\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+
+\usepackage{amsmath,amsthm}
+\usepackage{dtklogos}
+\usepackage{url}
+\usepackage{natbib}
+
+\startlocaldefs
+% Commandes auteurs spécifiques, par exemple :
+\newcommand{\fig}[3][H]{
+  \begin{figure}[#1]
+    \hskip -1cm
+    \input{figures/#2}
+    \caption{#3}
+    \label{fig:#2}
+  \end{figure}
+}
+\newcommand{\figpdf}[3][H]{
+  \begin{figure}[#1]
+    \hskip -1cm
+    \includegraphics[width=\textwidth]{figures/#2}
+    \caption{#3}
+    \label{fig:#2}
+  \end{figure}
+}
+\newcommand{\tab}[3][H]{
+  \begin{table}[#1]
+    \centering
+    \input{tables/#2}
+    \caption{#3}
+    \label{tab:#2}
+  \end{table}
+}
+\usepackage{tikz}
+\usepackage{float}
+%\usepackage{stfloats}
+%\usepackage{morefloats}
+\renewcommand{\r}{ \mathbf{ r} }
+\newcommand{\rileft}[1][i]{\underline r_{#1}}
+\newcommand{\riright}[1][i]{\overline r_{#1}}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\Diag}{Diag}
+\DeclareMathOperator*{\TPR}{TPR}
+\DeclareMathOperator*{\FPR}{FPR}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\maximize}{maximize}
+\DeclareMathOperator*{\minimize}{minimize}
+\newcommand{\RR}{\mathbb{R}}
+%\newcommand{\E}{\mbox{\tiny \`eme}}
+%\def\1{1\kern-.20em {\rm l}}
+\endlocaldefs
+
+\setmainlanguageenglish
+\firstpage{1} % à régler par l'éditeur
+
+\begin{document}
+
+
+  % infos fournies par l'éditeur, laisser vide
+  % \volume{}
+  % \numero{}
+  % \anneepublication{}
+  % \doi{}
+ \arxiv{math.PR/00000000} % Si disponible
+
+  \titre{A breakpoint detection error function for segmentation model
+  selection}
+  \titrecourant{Manuel du J-SFdS}
+
+  \begin{InfosAuteurs}
+    \auteur{%
+      \prenom{Toby Dylan} \nom{Hocking}%
+      \thanksref{t1}%
+      \contact[label=e1]{toby.hocking@mail.mcgill.ca}%
+    }%
+    \affiliation[t1]{McGill University Department of Human Genetics, 
+      Montr\'eal, Canada.\\
+      \printcontact{e1}%
+    }
+    \enteteauteurs{TD Hocking} %noms courants des auteurs en tête de page
+  \end{InfosAuteurs}
+
+  
+  \begin{abstract}
+This paper discusses methods for accurately detecting the
+breakpoints in a piecewise constant signal $\mu$, given some noisy
+observations $y$. In the previous chapter, we saw that that models
+with different penalties like flsa and flsa.norm have
+different breakpoint detection accuracy. This observation naturally
+poses a question: what is the penalty that will result in the best
+breakpoint detection? In this chapter, I discuss a method that can be
+used to find these penalties, given certain assumptions about the
+data.
+\end{abstract}
+
+  
+  \begin{motscles}
+    \mot{mode d'emploi}%
+    \mot{classe du J-SFdS}%
+  \end{motscles}
+
+  \begin{motsclesalter}
+    \mot{users guide}
+    \mot{J-SFdS document class}
+  \end{motsclesalter}
+  
+  \begin{AMSclass}
+    \kwd{35L05}
+    \kwd{35L70}
+  \end{AMSclass}
+ 
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{figure-motivation}
+  \caption{Two simulated signals with the same change-points.}
+  \label{fig:motivation}
+\end{figure}
+
+\subsection{Chapter summary}
+
+This chapter presents two contributions:
+\begin{itemize}
+\item Given a latent signal $\mu$, we define a precise breakpoint
+  detection error function, and discuss its relationship to the
+  annotation error defined in Chapter~\ref{chapter:bams}.
+\item We use the error function to determine optimal penalties for
+  breakpoint detection in databases of simulated signals of varying
+  sampling density, noise, and length.
+\end{itemize}
+
+In recent years, several authors have developed a theory of minimal
+penalties that can be used to accurately recover a signal from noisy
+observations \citep{calibration,lebarbier}. These methods do not take
+advantage of the breakpoint annotation data, but instead can be used
+offline to analyze some assumptions about the signal and the noise of
+the data. Typically, these results guarantee recovery of the correct
+signal with high probability. However, in this chapter we are more
+interested in accurate recovery of the breakpoints than the signal
+itself.
+% Asymptotically, selecting the model that best reconstructs the
+% latent signal is equivalent to selecting the model that recovers the
+% most accurate breakpoints. However, with finite sample size, this is
+% not necessarily the case. And we show an example of this inconsistency
+% in a simulated data set in
+% Figure~\ref{fig:variable-density-sigerr}. 
+So here I devote several
+pages to directly attacking the problem of breakpoint detection rather
+than signal recovery.
+
+% To construct optimal penalties for the recovery of breakpoints in
+% piecewise constant signals, we must make some assumptions about the
+% process that generates the signals. For the application to copy number
+% profiles, we are interested in penalties that can be used for signals
+% with varying
+
+% \begin{itemize}
+% \item Sampling density in bases per probe.
+% \item Noise, which is often profile-dependent.
+% \item Number of breakpoints, which we expect to be proportional to the
+%   size of the chromosome in base pairs.
+% \end{itemize}
+
+Starting in Section~\ref{variable_density}, I will explain how to
+construct optimal penalties given certain assumptions about the signal
+and noise. But we define optimality in terms of breakpoint detection
+error, so I will first devote several pages to a precise definition of
+the breakpoint detection error.
+
+\section{Properties of an ideal error function for breakpoint detection}
+\label{breakpoint_error}
+
+We assume there is a chromosome with $D$ base pairs. Let
+$\mathcal X= \{1,\dots,D\}$ be all the base pairs, and let $\mathbb
+B=\{1,\dots,D-1\}$ be all bases after which a break is possible.
+
+For the simulations we explore later in this chapter, we assume there
+is some latent signal $\mu\in\RR^D$. We sample some noisy signal
+$y\in\RR^{d}$ at positions $p\in\mathcal X^{d}$, sorted in increasing
+order $p_1<\cdots<p_d$. We will focus on the cghseg model, which
+defines the estimated signal with $k$ segments as
+\begin{equation}
+\label{eq:yhat^k}
+\begin{aligned}
+\hat y^k = &\argmin_{x\in\RR^d} &&  ||y - x||^2_2
+\\
+&\text{subject to} && k-1=\sum_{j=1}^{d-1} 1_{x_j\neq x_{j+1}}.
+\end{aligned}
+\end{equation}
+Note that we can quickly calculate $\hat y^k$ for
+$k\in\{1,\dots,k_{\text{max}}\}$ using pruned dynamic programming
+\citep{pruned-dp}. We then estimate the breakpoint locations using the mean
+\begin{equation}
+  \label{eq:breaks_phi}
+\phi(\hat y^k,p)
+= \big\{
+\lfloor 
+(p_j+p_{j+1})/2
+\rfloor
+\text{ for all }j\in\{1,\dots,d-1\}\text{ such that }
+\hat y^k_j\neq \hat y^k_{j+1}
+\big\}.
+\end{equation}
+Note that this is a function $\phi:\RR^d\times \mathcal X^d\rightarrow
+2^{\mathbb B}$ that gives the positions after which there is a break
+in $\hat y^k$. We would like to compare these estimated breakpoints to
+the exact set of breakpoints in the simulated signal
+\begin{equation}
+  \label{eq:breaks_B}
+  B = \phi\left(\mu,
+\left[
+  \begin{array}{ccc}
+    1 & \cdots & D
+  \end{array}
+\right]^\prime
+\right)
+=
+\{j\in\mathbb B:\mu_j\neq\mu_{j+1}\}.
+\end{equation}
+
+
+\newpage
+
+Given some guess of the breakpoint locations $G\subseteq\mathbb B$,
+the object of this section is to define a function ${E }(G)$
+that quantifies how bad the breakpoint location guess was. We would
+like the function ${E }: 2^{\mathbb B}\rightarrow \RR^+$ to
+satisfy:
+
+\begin{itemize}
+\item \textbf{(correctness)} Guessing exactly right costs nothing: ${E }(B)=0$.
+\item \textbf{(precision)} A guess closer to a real breakpoint is less
+  costly:\\if $B=\{b\}$ and $0\leq i<j$, then
+  ${E }(\{b+i\})\leq{E }(\{b+j\})$ and
+  ${E }(\{b-i\})\leq{E }(\{b-j\})$.
+% In
+%   fact, we will see that when we know the exact breakpoint locations
+%   in simulated signals, we can construct a cost function that verifies
+%   the strict inequality $<$. In real data, we will use the annotation
+%   error which only verifies the weak inequality $\leq$.
+\item \textbf{(FP)} False positive breakpoints are
+  bad: if $b\in B$ and $g\not\in B$, then ${E }(\{b\}) <
+  {E }(\{b,g\})$.
+\item \textbf{(FN)} Undiscovered breakpoints are bad:
+  $b\in B\Rightarrow{E }(\{b\}) < {E }(\emptyset)$.
+\end{itemize}
+
+Keeping these properties in mind, in this section we define 4 such
+breakpoint detection error functions $E$:
+\begin{itemize}
+\item When the latent signal is available in simulations, we can use
+  the exact breakpoint locations $B$ to define $E^B_{\text{exact}}$,
+  which satisfies all 4 properties.
+\item In real data, we do not know the exact breakpoint locations $B$,
+  but we can approximate them using regions $\hat R$ that visually
+  contain breakpoints. Assuming that there is exactly 1 region in
+  $\hat R$ for every breakpoint in $B$, we can define
+  $E^{\hat R}_{\text{complete}}$, which also satisfies all 4 properties.
+\item In real data, we may not want to assume that the regions $\hat
+  R$ contain all breakpoints $B$. So we define $E^{\hat
+    R,A}_{\text{incomplete}}$, which only satisfies these properties
+  if the annotations $A$ are consistent with the real breakpoints $B$.
+\item In real data, an imperfect annotator is making the database of
+  regions $\hat R$ and annotations $A$. So we define $E_{01}^{\hat
+    R,A}$ to limit the influence of each annotation.
+\end{itemize}
+
+We will define each of these breakpoint detection error functions in
+the next sections, then compare them in
+Figures~\ref{fig:variable-density-sigerr-small} and
+\ref{fig:variable-density-sigerr}.
+%Section~\ref{sec:incomplete}.
+
+\newpage
+
+\section{Exact breakpoint error for simulated signals}
+\label{sec:breakpoint_error}
+
+In this section, we use the exact breakpoint locations $B$ to define a
+breakpoint detection error function.
+
+We define the error of a breakpoint location guess $g\in\mathbb
+B$ as a function of the closest breakpoint in $B$. So
+first we put the breaks in order, by writing them as $B_1<\cdots<
+B_n$, with each $B_i\in\mathbb B$. Then, we define a set of intervals
+$R_B=\{\r_1,\dots,\r_n\}$ that form a partition of $\mathbb B$. For each
+breakpoint $B_i$ we define the region
+${\r}_i=[\rileft,\riright]\in\mathbb I \mathbb B$, where $\mathbb
+I\mathbb B\subset 2^{\mathbb B}$ denotes the set of all intervals of
+$\mathbb B$. We take the notation conventions from the interval
+analysis literature \citep{intervals}.
+
+We define the right limit of region $i$ as
+\begin{equation}
+  \label{eq:R_i}
+\riright
+=
+  \begin{cases}
+    D-1 & \text{if } i=n \\
+    \lfloor (B_{i+1}+B_i)/2 \rfloor & \text{otherwise}
+  \end{cases}
+\end{equation}
+and
+the left limit as
+\begin{equation}
+  \label{eq:L_i}
+  \rileft =
+  \begin{cases}
+    1 & \text{if } i=1 \\
+    \riright[i-1]+1 & \text{otherwise}.
+  \end{cases}
+\end{equation}
+
+The breakpoints $B_i$ and regions $\r_i$ are labeled for a small
+signal in Figure~\ref{fig:exact_imprecision}.
+
+\begin{figure}[b]
+  \centering
+  \input{figures/breakpoint-error-pieces}
+  \caption{For 2 breakpoints $i$, we plot their functions $\ell_i$
+    that measure the precision of a guess.
+%, and are used to calculate $I_i$ in
+ %   Equation~\ref{eq:imprecision}. 
+    The signal $\mu\in\RR^{22}$ has 2 breakpoints: $B=\{4,14\}$.}
+  \label{fig:exact_imprecision}
+\end{figure}
+
+
+Intuitively, if we observe a breakpoint guess $g\in \r_i$, then its
+closest breakpoint is $B_i$. To define the best guess in each region,
+we use piecewise linear functions $C_{\underline r,b,\overline r}:\RR\rightarrow[0,1]$
+defined as follows:
+\begin{equation}
+  \label{eq:cLxR}
+  C_{\underline r,b,\overline r}(g) =
+  \begin{cases}
+    0 & \text{if }g=b \\
+    (b-g)/(x-\underline r) & \text{if } \underline r< g< b \\
+    (g-b)/(\overline r-x) & \text{if } b< g< \overline r\\
+    1 & \text{ otherwise}.
+  \end{cases}
+\end{equation}
+For each breakpoint $i$ we measure the precision of a guess
+$g\in\mathbb B$ using
+\begin{equation}
+  \label{eq:ell_i_exact}
+  \ell_i(g)=C_{\rileft,B_i,\riright}(g).
+\end{equation}
+These functions are shown in Figure~\ref{fig:exact_imprecision} for a
+small signal with 2 breakpoints.
+% We
+% will use $\ell_i$ to define the imprecision~$I_i$, one component of
+% the exact breakpoint error.
+
+Now, we are ready to define the exact breakpoint error of a set of
+guesses $G\subseteq\mathbb B$.
+%We will use $i$ for the index of the
+%breakpoints $B_i$ and $j$ for the index of the guesses $G_j$. 
+First, let $G \cap\r$ be the subset of guesses $G$ that fall in
+region~$\r$. 
+
+Then, we define the false negative rate for region $\r$ as 
+\begin{equation}
+  \label{eq:FN_i}
+  \text{FN}(G,\r) = 
+  \begin{cases}
+    1 & \text{if } G\cap\r = \emptyset\\
+    0 & \text{otherwise}
+  \end{cases}
+\end{equation}
+and the false positive rate for region $\r$ as
+\begin{equation}
+  \label{eq:FP_i}
+  \text{FP}(G,\r) =
+  \begin{cases}
+    0 & \text{if }G\cap\r = \emptyset\\
+    |G\cap\r|-1 &\text{otherwise}
+  \end{cases}
+\end{equation}
+and the imprecision of the best guess in region $r$ as
+\begin{equation}
+  \label{eq:imprecision}
+  I(G,\r,\ell) =
+  \begin{cases}
+    0 & \text{if } G\cap\r = \emptyset\\
+    \min_{g\in G\cap\r} \ell(g) & \text{otherwise}.
+  \end{cases}
+\end{equation}
+When there are no breakpoints, we have $B=\emptyset$ and
+$R_B=\emptyset$. But we still would like to quantify the false
+positives, so let $G\setminus\big( \cup R_B\big) $ be the set of
+guesses $G$ outside of the breakpoint regions $R_B$. Finally, we
+define the exact error of guess $G$ with respect to the true
+breakpoints $B$ as
+\begin{equation}
+  \label{eq:exact_breakpoint_cost}
+  {E }_{\text{exact}}^B(G) =
+  \big|G\setminus(\cup R_B)\big|
+ + \sum_{i=1}^{|B|}\text{FP}(G,\r_i)+\text{FN}(G,\r_i)+I(G,\r_i,\ell_i).
+\end{equation}
+
+\newpage
+
+To calculate the exact breakpoint error, we first sort lists of
+$n=|B|$ and $m=|G|$ items. Using the quicksort algorithm, this
+requires $O(n\log n + m\log m)$ operations in the average case
+\citep{clrs}. Once sorted, the components of the cost can be
+calculated in linear time $O(n + m)$. So, overall the calculation of
+the error can be accomplished in best case $O(n + m)$, average case
+$O(n\log n + m\log m)$ operations.
+
+\newpage
+\section{Incomplete annotation error for real data}
+\label{sec:incomplete}
+
+In real data, we do not have access to the latent signal $\mu$, nor
+the underlying set of breakpoints $B$. However, by
+plotting the data, we can easily identify regions that contain
+breakpoints by visual inspection, as shown in
+Figure~\ref{fig:variable-density-annotation-cost}.
+
+In general, let $A=\{a_1,\dots,a_n\}$ be some annotations and $\hat
+R=\{\hat \r_1,\dots,\hat \r_n\}$ be the corresponding regions. For
+every annotation~$i$, let $\hat\r_i\subset\mathbb I\mathbb B$ be the
+interval that defines the region, and let $a_i\subseteq\{0,1,\dots\}$
+be the interval of allowable breakpoint counts in this region. For
+example, consider the annotated regions in
+Table~\ref{tab:sample_annotations}.
+
+\begin{table}[b!]
+  \begin{center}
+    \begin{tabular}{ccc}
+  $i$ & Annotation $a_i$ & Region $\hat \r_i$\\
+\hline
+1 & \{0\} & [5,10]\\
+2 & \{1\} & [20,30]\\
+3 & \{1,2,\dots\} & [40,70]\\
+4 & \{0\} & [80,100]
+\end{tabular}
+  \end{center}
+  \caption{Sample annotated regions for a signal sampled on $D=100$ base pairs. 
+    An annotation $a_i$ indicates how many breakpoints are allowed in the corresponding region $r_i$.
+    There are 0 breaks in bases 5-10 and 80-100.
+    There is exactly 1 break in bases 20-30.
+    There is at least 1 break in bases 40-70.}
+  \label{tab:sample_annotations}
+\end{table}
+
+
+
+
+Then, we define the annotation-dependent false positive rate as
+\begin{equation}
+  \label{eq:FP_hat}
+  \hat{ \text{FP}}(G,\r,a) =
+    \big( 
+|G\cap\r|-\max(a)
+\big)_+
+\end{equation}
+and the annotation-dependent false negative rate as
+\begin{equation}
+  \label{eq:FN_hat}
+  \hat{ \text{FN}}(G,\r,a) =
+  \big(
+\min(a)-|G\cap\r|
+\big)_+.
+\end{equation}
+
+So then we define the incomplete annotation error for a set of
+regions $R$ with annotations $A$ as
+\begin{equation}
+  \label{eq:incomplete}
+  E^{R,A}_{\text{incomplete}}(G)=
+    \sum_{(\r,a)\in(R,A)} \hat{\text{FP}}(G,\r,a) + \hat{\text{FN}}(G,\r,a).
+\end{equation}
+
+\newpage 
+
+In the case of analyzing the simulated signals in the top panels of
+Figure~\ref{fig:variable-density-annotation-cost}, let us consider the
+set of regions $\hat R$ depicted using the red rectangles. Every
+region $\hat\r_i\in\hat R$ contains exactly 1 breakpoint
+$B_i\in\hat\r_i$, so we have a corresponding set of annotations
+$ A$ with $a=\{1\}$ for every annotation $a\in A$. In real data we
+will probably only be able to see a subset of the real breakpoints,
+but we analyze it here to illustrate the approximation induced by the
+annotation process.
+
+Given the set of breakpoint regions $\hat R$, we define $|\hat R|+1$
+negative regions
+\begin{equation}
+  \label{eq:R^0}
+  \hat R^0 = \big\{ 
+[1,\underline r_1-1],
+[\overline r_1+1, \underline r_2-1],
+\dots,
+[\overline r_{n-1}+1,\underline r_n-1],
+[\underline r_n+1,d-1]
+\big\},
+\end{equation}
+as shown in the middle panels of
+Figure~\ref{fig:variable-density-annotation-cost}. There is a
+corresponding set of annotations $A^0$ with $a=\{0\}$ for every
+annotation $a\in A^0$. We will use the complete set of regions $\hat
+R\cup \hat R^0$ and annotations $A\cup A^0$ to define the
+annotation error $E^{\hat R\cup\hat R^0,A\cup
+  A^0}_{\text{incomplete}}$ for models of these simulated signals.
+
+
+In Figure~\ref{fig:variable-density-sigerr-small}, we plot some model
+selection error functions for the 2 simulated signals shown in
+Figure~\ref{fig:variable-density-annotation-cost}. It is clear that
+the annotation error is a good approximation of the breakpoint error,
+and there are several interesting observations to note. 
+
+\newpage
+
+\begin{itemize}
+\item \textbf{Signal}: we plot the log squared error of the estimated
+  signal $\hat y^k$ with respect to the latent signal $\mu$, defined
+  as
+  \begin{equation}
+    \label{eq:signal_cost}
+    E^{\text{signal}}(k) = \log_{10}\left[
+\frac 1 d \sum_{i=1}^d(\hat y_i^k - \mu_i)^2
+\right].
+  \end{equation}
+  \begin{itemize}
+\item For the signal sampled at 7 bases/probe, the minimum of the
+  error identifies the correct model with 7 segments.
+\item For the signal sampled at 374 bases/probe, the minimum of the
+  error identifies an incorrect model with only 5
+  segments.
+  \end{itemize}
+\item \textbf{Breakpoint}: for both signals, the minimum of the
+  breakpoint error identifies the correct model. 
+\item \textbf{Annotation}: the annotation error is a close
+  approximation of the breakpoint error, and also identifies the
+  correct model.
+\end{itemize}
+\begin{figure}[H]
+  \centering
+  \input{figures/variable-density-sigerr-small}
+  \caption{Model selection error curves for 2 simulated
+    signals. Minima are highlighted using circles.
+    \protect\\
+    \textbf{Signal}: the log squared error $E^{\text{signal}}$ of the
+    estimated signal $\hat y^k$ for $k$ segments with respect to the
+    latent signal $\mu$.
+    \protect\\
+    \textbf{Breakpoint}: exact breakpoint error $E^B_{\text{exact}}$.
+    %described in Section~\ref{sec:breakpoint_error}.
+    \protect\\
+    \textbf{Annotation}: incomplete annotation error
+    $E^{R,A}_{\text{incomplete}}$.
+%for the annotations shown in
+ %   Figure~\ref{fig:variable-density-annotation-cost}. 
+}
+  \label{fig:variable-density-sigerr-small}
+\end{figure}
+
+\newpage
+
+
+\section{Link with breakpoint error using 
+complete annotation error}
+\label{sec:complete}
+It is clear from Figure~\ref{fig:variable-density-sigerr-small} that
+the annotation error is a good approximation of the exact breakpoint
+error when the annotated regions $\hat R,A$ agree with the real
+breakpoints $B$. In this section, we make this intuition precise by
+showing exactly how to relax the breakpoint error to obtain the
+annotation error. There are two steps:
+\begin{itemize}
+\item First, we define the complete annotation error by relaxing the
+  definition of the exact breakpoint error.
+\item Then, we show that the complete annotation error is equivalent
+  to the incomplete annotation error when we have a complete set of
+  annotations.
+\end{itemize}
+
+\begin{figure}[b!]
+  \centering
+\includegraphics[width=\linewidth]{figures/variable-density-annotation-cost}
+%\input{figures/variable-density-annotation-cost}
+\vskip -0.1in
+  \caption{\textbf{Top}: simulated noisy
+  signals (black) with their latent signals $\mu$ (blue) and
+  visually-determined breakpoint annotations $\hat R$
+  (red). 
+\protect\\
+\textbf{Middle}: negative regions $\hat R^0$ constructed
+  using (\ref{eq:R^0}).
+\protect\\
+\textbf{Bottom}: breakpoint detection
+  imprecision curves for the breakpoint error $\ell_i$
+  (\ref{eq:imprecision}) and the annotation error $\hat
+  \ell_i$ (\ref{eq:hat_ell_i}).}
+\label{fig:variable-density-annotation-cost}
+\end{figure}
+
+\subsection{The complete annotation error}
+
+We define the complete annotation error as a relaxation of the exact
+breakpoint error. So first, let us recall the definition of the exact
+breakpoint error from (\ref{eq:exact_breakpoint_cost}):
+$$
+  {E }_{\text{exact}}^B(G) =
+  \big|G\setminus(\cup R_B)\big|
+ + \sum_{i=1}^{|B|}\text{FP}(G,\r_i)+\text{FN}(G,\r_i)+I(G,\r_i,\ell_i).
+$$
+To define the complete annotation error, we perform two relaxations:
+\begin{itemize}
+\item Instead of using (\ref{eq:R_i}) and (\ref{eq:L_i}) to
+  determine a breakpoint region $\r_i$, we use the region $\hat\r_i$
+  determined by visual inspection.
+\item Rather than the piecewise linear imprecision $\ell_i$, we use
+  the zero-one imprecision $\hat \ell_i$:
+\begin{equation}
+  \label{eq:hat_ell_i}
+  \hat\ell_i(g) = 1_{g\not\in \hat \r_i}.
+\end{equation}
+We show this relaxation by ploting the imprecision functions $\ell_i$
+and $\hat \ell_i$ in the bottom panels of
+Figure~\ref{fig:variable-density-annotation-cost}.
+\end{itemize}
+So, performing these two relaxations results in the following
+definition of the complete annotation error:
+\begin{eqnarray}
+  E_{\text{complete}}^{\hat R} (G)
+&=&  \Big|G\setminus(\cup \hat R)\Big| \nonumber
+ + \sum_{i=1}^{|\hat R|}\text{FP}(G,\hat\r_i)+\text{FN}(G,\hat\r_i)+I(G,\hat\r_i,\hat\ell_i)\\
+&=&  \Big|G\setminus(\cup \hat R)\Big|
+ + \sum_{\hat\r\in\hat R}\text{FP}(G,\hat\r)+\text{FN}(G,\hat\r)
+\end{eqnarray}
+It is clear that $E^{\hat R}_{\text{complete}}$ depends on the
+annotations only through their regions. In particular, the annotated
+breakpoint counts $a_i=\{1\}$ are not used in this definition, since
+we assumed that each region $\hat \r_i$ contains exactly 1
+break. Also, since we used the zero-one loss for $\hat\ell_i$, the
+imprecision function $I$ is always zero.
+
+
+
+% First, let us enlarge the set of annotated regions so that it covers
+% all the possible breakpoints $\mathbb B$. 
+\subsection{Equivalence of complete and incomplete annotation error}
+
+
+
+To see the connection between the complete and incomplete annotation
+error functions, note that
+\begin{eqnarray}
+\nonumber  \hat{\text{FN}}(G,\r,\{1\}) 
+&=&   \big(
+1-|G\cap\r|
+\big)_+\\
+&=&
+\text{FN}(G,\r), \label{eq:fn-hat}
+\end{eqnarray}
+and
+\begin{eqnarray}
+\nonumber
+  \hat{\text{FP}}(G,\r,\{1\}) 
+&=&
+\big( 
+|G\cap\r|-1
+\big)_+\\
+% &=&
+% \begin{cases}
+%   0 & \text{if }|H(G,r)|\leq 1\\
+%   |H(G,r)| - 1 & \text{if }|H(G,r)|\geq 1
+% \end{cases}\\
+&=& \text{FP}(G,\r). \label{eq:fp-hat}
+\end{eqnarray}
+For the complete annotation error we quantified the false positive
+rate of the breakpoints that fall outside of the breakpoint regions
+$\hat R$ using $G\setminus(\cup \hat R)$. For the incomplete
+annotation error, we instead created a set of 0-breakpoint annotations
+$\hat R^0$ for this purpose. Note that by construction of the negative
+regions in (\ref{eq:R^0}), we have 
+\begin{equation}
+  \label{eq:Rcomplement}
+  G\setminus \left(\cup \hat R\right)
+ = 
+G\cap\left(\cup \hat R^0 \right),
+\end{equation}
+or in words, the guesses outside of the breakpoint regions $\hat R$
+are in the negative regions $\hat R^0$. So using
+(\ref{eq:Rcomplement}), we have
+\begin{eqnarray}
+  \hat{\text{FP}}(G,(\cup \hat R^0),\{0\})
+&=& 
+|G\cap(
+  \cup \hat R^0
+)|\nonumber
+\\
+&=&
+|G\setminus(\cup\hat R)|,\label{eq:fp-outside}
+\end{eqnarray}
+which is the first component of the complete annotation loss.
+
+
+
+Recall that $\hat R,A$ represent annotated regions that each contain
+exactly 1 breakpoint, and $\hat R^0,A^0$ contain no breakpoints. So
+using (\ref{eq:fn-hat}), (\ref{eq:fp-hat}), and
+(\ref{eq:fp-outside}), we can show that the incomplete annotation error
+is equivalent to the complete error in this sense:
+\begin{eqnarray}
+  E_{\text{incomplete}}^{\hat R\cup \hat R^0,A\cup A^0}(G)
+&=&
+\sum_{\r\in \hat R^0} \hat{\text{FP}}(G,\r,\{0\})\nonumber 
++
+\sum_{\r\in\hat R} \hat{\text{FP}}(G,\r,\{1\}) + \hat{\text{FN}}(G,\r,\{1\})
+ \\
+&=&
+ \hat{\text{FP}}(G,\cup \hat R^0,\{0\})\nonumber 
++
+\sum_{\r\in\hat R} \hat{\text{FP}}(G,\r,\{1\}) + \hat{\text{FN}}(G,\r,\{1\})
+ \\
+&=&
+|G\setminus(\cup\hat R)|
++\nonumber
+\sum_{\r\in\hat R} {\text{FP}}(G,\r) + {\text{FN}}(G,\r)\\
+&=&
+E^{\hat R}_{\text{complete}}(G).
+\end{eqnarray}
+
+So in fact the incomplete annotation error is equivalent to the
+complete error when the annotated regions $\hat R$ each contain
+exactly 1 breakpoint. But we call this the incomplete error since it
+is also well-defined for arbitrary sets of regions $\hat R$ and
+annotations $A$.
+
+\section{Zero-one annotation error}
+\label{sec:zero-one}
+The initial method that we used to quantify the breakpoint error on
+the neuroblastoma data set in Chapter~\ref{chapter:bams} was the
+zero-one loss in (\ref{eq:1error}). In this section, we show
+that the zero-one loss is a thresholded version of the incomplete
+annotation error function.
+
+First, let us define the zero-one thresholding function
+$t:\mathbb Z^+\rightarrow\mathbb Z^+$ as
+\begin{equation}
+  \label{eq:thresholding}
+  t(x)=1_{x\neq 0} =
+  \begin{cases}
+    1 & \text{if }x\neq 0\\
+    0 & \text{otherwise}.
+  \end{cases}
+\end{equation}
+
+The idea of thresholding is to limit the error that any one annotation
+can induce. So instead of counting incorrect breakpoint guesses, we count
+incorrect annotations. We define the zero-one annotation error as
+\begin{eqnarray}
+  \label{eq:ann01err}
+  E_{01}^{\hat R,A}(G)
+&=&\nonumber
+ \sum_{(\r,a)\in(\hat R,A)} 
+t\left[\hat{\text{FP}}(G,\r,a)\right]+
+t\left[\hat{\text{FN}}(G,\r,a)\right]\\
+&=&\nonumber
+ \sum_{(\r,a)\in(\hat R,A)} 
+1_{|G\cap\r|>\max(a)}+
+1_{|G\cap \r|<\min(a)}\\
+&=&
+ \sum_{(\r,a)\in(\hat R,A)} 
+1_{|G\cap\r|\not\in a}.
+\end{eqnarray}
+
+\newpage 
+
+\section{Comparing annotation error functions}
+
+In practice, we have few annotated regions per signal in real data. In
+Figure~\ref{fig:variable-density-sigerr}, we show how the annotation
+error is degraded as we remove annotations. In particular, it is clear
+that using the thresholded zero-one annotation error significantly
+degrades the approximation of the FP curve. Nevertheless, it is worth
+noting that minimum of the zero-one error still uniquely identifies
+the correct model with 7 segments. Even after removing many
+annotations, the minimum error still identifies the correct
+model, but not uniquely.
+
+% \begin{itemize}
+% \item \textbf{Complete}: the annotation error is a
+%   close approximation of the breakpoint error, and its minimum also
+%   identifies the correct model.
+% \item \textbf{Zero-one}: thresholding degrades the approximation of FP
+%   on models with many breakpoints. However, the minimum error still
+%   identifies the correct model.
+% \item \textbf{Incomplete}: removing half of the annotations further degrades
+%   the approximation.
+%   \begin{itemize}
+% \item However, for the signal sampled at 374 bases/probe, the
+%   minimum annotation error still uniquely identifies the correct
+%   model. 
+% \item For the signal sampled at 7 bases/probe, the
+%   $\hat{\text{FP}}$ is a poor approximation of $\text{FP}$ because
+%   there are very large regions with no breakpoints and no annotations.
+%   \end{itemize}
+% \item \textbf{Positive}: the annotation error is formed using only 3
+%   annotated breakpoint regions. The minimum annotation error
+%   identifies the correct model, but not uniquely.
+% \end{itemize}
+
+
+
+
+\begin{figure}[H]
+  %\hspace{-1.5cm}
+  \input{figures/variable-density-sigerr}
+  \caption{Comparison of annotation error functions as the set of
+    annotations changes. Minima are highlighted using circles.
+    \protect\\
+    \textbf{Complete}: annotation error
+    $E_{\text{incomplete}}^{\hat R\cup \hat R^0,A\cup A^0}$ 
+    for a complete set of 6
+    positive and 7 negative annotations.
+    \protect\\
+    \textbf{Zero-one}: zero-one annotation error $E_{01}^{
+      \hat R\cup \hat R^0,A\cup A^0}$
+    for the complete annotations.
+    \protect\\
+    \textbf{Incomplete}: zero-one annotation error $E_{01}^{\hat R,A}$
+    for 3 positive and 4 negative annotations.
+    \protect\\
+    \textbf{Positive}: zero-one annotation error $E_{01}^{\hat R,A}$
+    for 3 positive annotations.}
+  \label{fig:variable-density-sigerr}
+\end{figure}
+
+\newpage
+
+\section{Sampling density normalization}
+\label{variable_density}
+Having properly defined how to compute the breakpoint detection error
+in the previous sections, we now use it to derive several results
+about optimal penalties for breakpoint detection. We start by
+considering a penalty that is invariant to sampling density. First, we
+will present an empirical analysis of several simulated signals using
+the breakpoint error. Then, we will discuss the relationship of our
+results to relevant theoretical results.
+
+In real array CGH data, the sampling density of probes along the
+genome is not uniform across samples. In fact, we see a sampling
+density between 40 and 4400 kilobases per probe in the neuroblastoma
+data set.
+
+So to construct a penalty that can best adapt to this variation, we
+analyze the following simulation. We create a latent signal
+$\mu\in\RR^D$ over $D=70000$ base pairs, with breakpoints every 10000
+base pairs, shown as the blue line in
+Figure~\ref{fig:variable-density-signals}. Then, we define a signal
+sample size $d_i\in\{70,\dots,70000\}$ for every noisy signal
+$i\in\{1,\dots,n\}$. Let $y_i\in\RR^{d_i}$ be noisy signal $i$,
+sampled at positions $p_i\in\mathcal X^{d_i}$, with
+$p_{i1}<\cdots<p_{i,d_i}$. We sample every probe $j$ from the
+$y_{ij}\sim N(\mu_{p_{ij}},1)$ distribution. These samples are shown
+as the black points in Figure~\ref{fig:variable-density-signals}.
+
+We would like to learn some model complexity parameter $\lambda$ on
+the first noisy signal, and use it for accurate breakpoint detection
+on the second noisy signal. In other words, we are looking for a model
+selection criterion which is invariant to sampling density. 
+
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{figures/variable-density-signals}
+%\input{figures/variable-density-signals}
+\vskip -0.3cm
+  \caption{Two noisy signals (black) sampled from
+  a latent piecewise constant signal (blue). Note that these are the
+  same signals that appear in
+  Figure~\ref{fig:variable-density-annotation-cost}.}
+\label{fig:variable-density-signals}
+\end{figure}
+
+\newpage
+
+To attack this problem, we proceed as follows. For every signal $i$,
+we use pruned dynamic programming to calculate the maximum likelihood
+estimator $\hat y^k_i\in\RR^{d_i}$, for several model sizes
+$k\in\{1,\dots,k_{\text{max}}\}$ \citep{pruned-dp}. Then, we define
+the model selection criteria
+\begin{equation}
+  \label{eq:kstar_density}
+  k^\alpha_i(\lambda) =\argmin_k \lambda k d_i^\alpha + 
+  ||y_i-\hat y^k_i||_2^2.
+\end{equation}
+Each of these is a function $k_i^\alpha:\RR^+\rightarrow
+\{1,\dots,k_{\text{max}}\}$ that takes a model complexity tradeoff
+parameter $\lambda$ and returns the optimal number of segments for
+signal $i$. The goal is to find a penalty exponent $\alpha\in\RR$ that
+lets us generalize $\lambda$ between different signals $i$.
+
+
+To quantify the accuracy of a segmentation for signal $i$, let
+$\text{BErr}_i(k)$ be the breakpoint detection error of the model with
+$k$ segments. This is a function
+$\text{BErr}_i:\{1,\dots,k_{\text{max}}\}\rightarrow\RR^+$, and in
+real data this corresponds to the breakpoint annotation error
+$E_{01}^{\hat R,A}\left[\phi(\hat y^k_i,p_i)\right]$. But in
+these simulations we can calculate the more precise measure
+\begin{equation}
+  \label{eq:berr}
+  \text{BErr}_i(k) = E_{\text{exact}}^{B}\left[
+\phi(\hat y_i^k,p_i)
+\right].
+\end{equation}
+where $B$ is the set of real breakpoints in the latent
+signal $\mu$.
+
+In Figure~\ref{fig:variable-density-berr-k}, we plot $\text{BErr}_i$
+for the 2 simulated signals $i$ shown previously.  As expected, the
+model recovers more accurate breakpoints from the signal sampled at a
+higher density.  
+
+\fig{variable-density-berr-k}{Exact breakpoint error
+  $\text{BErr}_i(k)$ for two signals $i$ and several cghseg model
+  sizes $k$. Note that these are the same error curves that appear
+in the Breakpoint panels of Figure~\ref{fig:variable-density-sigerr-small}.}
+
+\newpage
+
+Now, let us define the penalized
+model breakpoint error $E^\alpha_i:\RR^+\rightarrow\RR^+$ as
+\begin{equation}
+  \label{eq:lerr}
+E^\alpha_i(\lambda) = \text{BErr}_i\left[
+k^\alpha_i(\lambda)
+\right].
+\end{equation}
+In Figure~\ref{fig:variable-density-berr}, we plot these functions for the
+two signals $i$ shown previously, and for several penalty exponents $\alpha$.
+
+The dots in Figure~\ref{fig:variable-density-berr} show the optimal
+$\lambda$ found by minimizing the penalized model breakpoint detection
+error:
+\begin{equation}
+  \label{eq:lambda_hat}
+  \hat \lambda^\alpha_i = \argmin_{\lambda\in\RR^+}  E^\alpha_i(\lambda)
+\end{equation}
+
+Figure~\ref{fig:variable-density-berr} suggests that $\alpha\approx1/2$
+defines a penalty with aligned error curves, which will result in
+$\hat \lambda_i^\alpha$ values that can be generalized between
+profiles. 
+%Next, we will attempt to determine the optimal $\alpha$
+%value.
+
+\fig{variable-density-berr}{Model selection error curves
+  $E_i^\alpha(\lambda)$ for 2 signals $i$ and several exponents
+  $\alpha$. The penalty contains a term for the number of points sampled $d_i^\alpha$.}
+
+\newpage
+
+Now, we are ready to define 2 quantities that will be able to help us
+choose an optimal penalty exponent $\alpha$.
+
+First, let us consider the training error over the entire database:
+\begin{equation}
+  \label{eq:lerr_train}
+  E^\alpha(\lambda) = \sum_{i=1}^n E_i^\alpha(\lambda),
+\end{equation}
+and we define the minimal value of this function as
+\begin{equation}
+  \label{eq:lerr_train_min}
+  E^*(\alpha) = \min_\lambda E^\alpha(\lambda).
+\end{equation}
+In Figure~\ref{fig:variable-density-error-train}, we plot these
+training error functions $E^\alpha$ and their minimal values $E^*$ for
+several values of $\alpha$. It is clear that the minimum training
+error is found for some penalty exponent $\alpha$ near 1/2, and we
+would like to find the precise $\alpha$ that results in the lowest
+possible minimum $E^*(\alpha)$.
+
+\fig{variable-density-error-train}{Training error functions $E^\alpha$
+  in black and their minimal values $E^*(\alpha)$ in red. The penalty
+  contains a term for the number of points sampled $d_i^\alpha$.}
+
+\newpage
+
+We also consider the test error over all pairs of signals when
+training on one and testing on another:
+\begin{equation}
+  \label{eq:lerr_test}
+  \text{TestErr}(\alpha) = 
+\sum_{i\neq j} E^\alpha_i(\hat \lambda_j^\alpha).
+\end{equation}
+
+In Figure~\ref{fig:variable-density-error-alpha}, we plot $E^*$ and
+TestErr for a grid of $\alpha$ values.
+It is clear that the optimal penalty is given by $\alpha=1/2$. This
+corresponds to the following model selection criterion which is
+invariant to sampling density:
+\begin{equation}
+  \label{eq:var_dens_opt_pen}
+  k_i(\lambda) = \argmin_k \lambda k \sqrt{d_i}+||y_i-\hat y_i^k||^2_2
+\end{equation}
+
+\fig{variable-density-error-alpha}{Train and test breakpoint detection
+  error as a function of penalty exponent $\alpha$. The penalty
+  contains a term for the number of points sampled $d_i^\alpha$. Mean
+  error is drawn as a black line, with one standard deviation shown as
+  a grey band.}
+
+\newpage
+
+As explained by \citet{sylvain-survey}, a model selection procedure
+can be either efficient or consistent. An efficient procedure for
+model estimation accurately recovers the latent signal, whereas a
+consistent procedure for model identification accurately recovers the
+breakpoints. Since we consider the breakpoint detection error, we are
+attempting to construct a consistent penalty, not an efficient
+penalty.
+
+In general terms, the fact that we find a nonzero exponent $\alpha$
+for our $d_i^\alpha$ penalty term agrees with other results. In
+particular, \citet{vfold} proposed an optimal procedure to select model
+complexity parameters in cross-validation by normalizing by the sample
+size $d_i$. 
+% This is in
+% intuitive agreement with our result that we need to normalize by the
+% sample size $d_i$, although they do not use the square root term
+% $\sqrt{d_i}$.
+
+The $\sqrt{d_i}$ term that we find here using simulations is in
+agreement with \citet{aurelie}, who used finite sample model selection
+theory to find a $\sqrt{d_i}$ term in a penalty optimal for
+clustering.
+
+When theoretically deriving an efficient penalty for change-point
+model estimation in the non-asymptotic setting, \citet{lebarbier}
+obtained a $\log d_i$ term. This contrasts our result, which examines
+the identification problem using the breakpoint error and obtains a
+$\sqrt{d_i}$ term. But in fact this is in agreement with classical
+results that AIC underpenalizes with respect to the BIC, as shown in
+Table~\ref{tab:AIC-BIC}.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{cc|cc}
+     Estimation & Penalty & Identification & Penalty \\
+     Model & Term & Model & Term\\
+     \hline
+     AIC & 2 & BIC & $\log d_i$\\
+     Lebarbier & $\log d_i$ & This work & $\sqrt{d_i}$\\
+  \end{tabular}
+  \caption{Comparing our results with Lebarbier, 
+in the context of classical results involving AIC and BIC. 
+The BIC is designed for model identification and penalizes more than the AIC.
+Likewise, our penalty examines model identification using the breakpoint
+detection error, and penalizes more than the efficient penalty proposed
+by Lebarbier.}
+  \label{tab:AIC-BIC}
+\end{table}
+
+\newpage
+
+\section{Scale normalization}
+\label{variable_scale}
+In real array CGH data, the signal variance is not the same across
+samples. In fact, using the variance estimate proposed below in
+(\ref{eq:med_abs_diff}), over all the profiles in the
+neuroblastoma data set, we see a range of values between 0.029 and
+0.371.
+
+So we analyze the following simulation to construct a penalty that is
+invariant to the scale of the data. First, we define a theoretical
+signal $\mu\in\RR^{700}$ with breakpoints every 100 bases, shown as
+the blue line for 2 signals in
+Figure~\ref{fig:variable-scale-signals}.
+
+Then, we generate a signal $y_i\in\RR^{d_i}$ by adding standard normal
+noise to the signal, and multiplying by a scale factor
+$\sigma\in\{1,10,100,1000\}$. The goal is to define a penalty
+invariant to this scaling.
+For each signal $i$, we estimate its
+variance using the robust estimator
+\begin{equation}
+  \label{eq:med_abs_diff}
+  \hat s_i = \text{Median}_{j=1}^{d_i-1}
+\left(|y_{ij}-y_{i,j+1}|\right),
+\end{equation}
+and then define the optimal number of segments as
+\begin{equation}
+  \label{eq:kstar_shat}
+  k_i^\alpha(\lambda) = \argmin_k \lambda k \hat s_i^\alpha 
++ ||y_i - \hat y_i^k||^2_2,
+\end{equation}
+where $\hat y_i^k$ is the least squares segmentation with $k$
+segments.
+
+\fig{variable-scale-signals}{Simulated noisy signal (black) and latent
+  signal (blue) for 2 different scales.}
+
+\newpage
+Using the type of analysis in the previous section, we saw that
+minimum breakpoint detection error is achieved when we choose a
+penalty exponent $\alpha$ that results in aligned annotation error
+curves $E_i^\alpha$. For two signals $i\neq j$, this implies the
+condition
+\begin{eqnarray}
+  \label{eq:equal_err}
+%  E_i^\alpha(\lambda)&=&E_j^\alpha(\lambda)\\
+  \text{BErr}_i[k^\alpha_i(\lambda)]&=&  
+  \text{BErr}_j[k^\alpha_j(\lambda)].
+\end{eqnarray}
+Since the assumption of our simulation model is that signals $i$ and
+$j$ are identical up to a scaling, the breakpoints are the same and so
+$\text{BErr}_i=\text{BErr}_j$. Thus we simply need to find the 
+exponent $\alpha$ such that $k^\alpha_i(\lambda)=k^\alpha_j(\lambda)$.
+
+It is easy to see why $\alpha=2$ is the optimal exponent. First, let
+$y_1,y_2$ be two signals which are equivalent up to a scaling factor:
+$y_2=\sigma y_1$. This implies two interesting properties:
+\begin{itemize}
+\item \textbf{(a)} estimated models are the same up to a scaling
+  factor: $\hat y_2^k = \hat y_1^k\sigma$ for all model sizes $k$.
+\item \textbf{(b)} variance estimates are the same up to a scaling factor:
+  $\hat s_2 = \hat s_1 \sigma$.
+\end{itemize}
+From the defintion of $k^\alpha_i$ in (\ref{eq:kstar_shat}) it
+is clear that
+\begin{eqnarray*}
+  \label{eq:k2=k1}
+  k^0_2(\lambda) 
+&=& \argmin_k \lambda k + ||y_2 - \hat y_2^k||_2^2\\
+&=&\argmin_k \lambda k + ||\sigma y_1 - \sigma \hat y_1^k||_2^2 
+\ \ \ \textbf{ (a)}\\
+&=&\argmin_k \lambda k + \sigma^2||y_1 - \hat y_1^k||_2^2\\
+&=&\argmin_k \lambda\sigma^{-2} k+\sigma^2||y_1 - \hat y_1^k||_2^2\\
+&=& k^0_1(\lambda \sigma^{-2}).
+\end{eqnarray*}
+We use this fact to rewrite the equality of the model selection curves
+as follows:
+\begin{eqnarray*}
+  k_1^\alpha(\lambda) &=& k_2^\alpha(\lambda) \\
+k_1^0(\lambda \hat s_1^\alpha) &=& k_2^0(\lambda \hat s_2^\alpha)\\
+&=& k^0_1(\lambda\hat s_2^\alpha\sigma^{-2})\\
+&=&k_1^0\big(\lambda(\hat s_1\sigma^\alpha)\sigma^{-2}\big)\ \ \ \textbf{(b)}\\
+&=&k_1^0(\lambda\hat s_1^\alpha \sigma^{\alpha-2}).
+\end{eqnarray*}
+This implies that $\alpha=2$ must be chosen in order for the model
+selection curves to align $k_1^\alpha(\lambda)=k_2^\alpha(\lambda)$.
+
+
+\newpage
+
+We now proceed with the same kind of empirical analysis that we used
+to establish an optimal penalty for sampling density. In
+Figure~\ref{fig:variable-scale-berr}, we plot the penalized model
+breakpoint detection error $E_i^\alpha$ and the optimal $\hat
+\lambda_i^\alpha$ for two signals $i$ and several $\alpha$ values.
+This plot suggests that a value of $\alpha=2$ defines a penalty that
+will allow generalization of $\hat \lambda^\alpha_i$ values between
+signals $i$.
+
+\fig{variable-scale-berr}{Model breakpoint detection error functions
+  $E_i^\alpha$ (lines) and optimal $\hat \lambda_i^\alpha$ (points)
+  for several penalty exponents $\alpha$ and 2 signals $i$ of
+  different scale. The penalty contains a term for the variance
+  estimate $\hat s_i^\alpha$.}
+
+\newpage
+
+In Figure~\ref{fig:variable-scale-error-alpha}, we plot the train
+error $E^*$ and TestErr as functions of $\alpha$.  In agreement with
+our earlier analysis, these simulations clearly indicate that
+$\alpha=2$ is optimal. Thus, we conclude that the following model
+selection criterion is invariant to scaling:
+\begin{equation}
+  \label{eq:kstar_shat_opt}
+  k_i(\lambda) = \argmin_k \lambda k \hat s_i^2 + ||y_i-\hat y_i^k||^2_2.
+\end{equation}
+This result agrees with the theoretical results of \citet{lebarbier},
+who considered constructing an optimal penalty for change-point
+detection with respect to the square loss.
+
+
+\fig{variable-scale-error-alpha}{Train and test error curves as a
+  function of penalty exponent $\alpha$, for signals of variable
+  scale. The penalty contains a term for the variance estimate $\hat
+  s_i^\alpha$.}
+
+
+
+\newpage
+\section{Signal length normalization}
+\label{variable_size}
+In real array CGH data, we need to analyze chromosomes of varying length
+in base pairs. For example, human chromosome 1 is the largest at about
+250 mega base pairs, and chromosome 22 is the smallest with only about
+36 mega base pairs. But we expect that the number of breakpoints is
+proportional to the length of the chromosome in base pairs, and we would
+like to design a model selection criterion that is invariant to the
+signal length.
+
+So we consider the following simulation where we fix the number of
+points sampled at $d=2000$ and vary the length of the signal
+sampled. In Figure~\ref{fig:variable-breaks-constant-size}, we show
+samples of 2 different lengths $l_i$, for the same latent signal
+$\mu$.
+
+\figpdf{variable-breaks-constant-size}{Samples of 2 different lengths
+  $l_i$ but constant number of points $d=2000$.}
+
+\newpage
+
+For each signal $i$, we define the penalty
+\begin{equation}
+  \label{eq:kstar_length}
+  k_i^\alpha(\lambda) = \argmin_k \lambda k l_i^\alpha 
++ ||y_i - \hat y_i^k||^2_2,
+\end{equation}
+where $l_i$ is the length of the signal in base pairs. The goal will
+be to find an $\alpha$ that can be used for signals of varying length.
+
+
+In Figure~\ref{fig:variable-breaks-constant-size-berr}, we show
+the breakpoint detection error curves for two signals and several
+penalty exponents $\alpha$.
+These curves seem to align when $\alpha=-1/2$.
+
+\fig{variable-breaks-constant-size-berr}{Breakpoint detection error
+  curves for several penalty exponents $\alpha$ and 2 samples of
+  varying length in base pairs $l_i$. The penalty contains a term
+  $l_i^\alpha$.}
+
+\newpage
+
+In Figure~\ref{fig:variable-breaks-constant-size-alpha}, we plot the
+train and test error curves over the entire set of simulated signals.
+These curves indicate minimal breakpoint detection error at
+$\alpha=-1/2$, corresponding to the following penalty:
+\begin{equation}
+  \label{eq:kstar_length_opt}
+  k_i(\lambda) = \argmin_k \frac{\lambda k}{\sqrt{l_i}}
+  + ||y_i-\hat y_i^k||^2_2.
+\end{equation}
+
+
+
+
+\fig{variable-breaks-constant-size-alpha}{Train and test error curves
+  for signals of different length in base pairs $l_i$. The penalty
+  contains a term
+  $l_i^\alpha$.}
+
+\newpage
+
+Interestingly, the $1/\sqrt{l_i}$ term that we obtain here is in good
+agreement with our previous result that the optimal penalty for
+variable sampling density $d_i$ should have a $\sqrt{d_i}$ term. In
+particular, we can re-parameterize the problem to be in terms of the
+number of points sampled per segment $\rho_i=d_i/k_i$. In
+Section~\ref{variable_density} we held $k_i$ constant but in this
+section we hold $d_i$ constant. In both cases we have a penalty with a
+$\sqrt{\rho_i}=\sqrt{d_i/k_i}$ term.
+
+However, we do not know the number of segments $k_i$ in advance. But
+we supposed that the number of segments is proportional to the number
+of base pairs $l_i$, so we can use that in the penalty. This suggests
+a penalty that takes the form of $\sqrt{d_i/l_i}$. So in the next
+section, we confirm that this intuition works for constructing an
+optimal penalty.
+
+
+\newpage
+\section{Combining normalizations}
+\label{combining_penalties}
+In this section, we show that we can combine the results of the
+previous sections to create composite invariant penalties. In
+particular, to normalize for sampling density $d_i$ and length in base
+pairs $l_i$, we need $\sqrt{d_i}$ and $1/\sqrt{l_i}$ terms in the
+penalty, respectively. This suggests that when considering variable
+$d_i$ and $l_i$, we need a $\sqrt{d_i/l_i}$ term in the penalty, and
+in this section we show that this intuitive construction results in an
+optimal penalty.
+
+In Figure~\ref{fig:variable-size-signals}, we plot 2 signals with
+different number of points $d_i$ and length in base pairs $l_i$. We
+would like to find a penalty that allows us to generalize model
+complexity tradeoff parameters $\lambda$ between these signals.
+
+For each signal $i$, we define the penalty
+\begin{equation}
+  \label{eq:kstar_composite}
+  k_i^\alpha(\lambda) = \argmin_k \lambda k l_i^\alpha \sqrt{d_i}
+  + ||y_i - \hat y_i^k||^2_2,
+\end{equation}
+where $l_i$ is the signal length in base pairs and $d_i$ is the number
+of points sampled. We will attempt to determine an $\alpha$ that
+allows accurate breakpoint detection in signals of varying length and
+number of points sampled. Based on the result in
+Section~\ref{variable_size}, we expect to find $\alpha=-1/2$.
+
+\begin{figure}[H]
+  \centering
+\includegraphics[width=\linewidth]{figures/variable-size-signals}
+  \caption{Two signals with a different number of
+    points $d_i$ and length in base pairs $l_i$.}
+\label{fig:variable-size-signals}
+\end{figure}
+
+\newpage
+
+In Figure~\ref{fig:variable-size-berr}, we plot the breakpoint error
+functions $E_i^\alpha$ for 2 signals $i$ and several exponents
+$\alpha$. The curves seem to align when $\alpha=-1/2$.
+
+\fig{variable-size-berr}{Breakpoint error functions $E_i^\alpha$ for
+  several exponents $\alpha$ and 2 signals $i$ of varying number of
+  points $d_i$ and length in base pairs $l_i$. The penalty contains a
+  term $l_i^\alpha\sqrt{d_i}$.}
+
+In Figure~\ref{fig:variable-size-error-alpha}, we plot the train and
+test error as a function of penalty exponent $\alpha$. This analysis
+suggests that the optimal exponent is $\alpha=-1/2$, as expected from
+our previous analysis in Section~\ref{variable_size}.
+
+\fig{variable-size-error-alpha}{Train and test error functions for
+  several signals of varying number of points $d_i$ and length in base
+  pairs $l_i$. The penalty contains a term $l_i^\alpha \sqrt{d_i}$.}
+
+\newpage
+\section{Optimal penalties for the fused lasso signal approximator}
+
+In the previous sections, we used theoretical arguments and simulation
+experiments to determine the optimal penalties for cghseg. In this
+section, we demonstrate that the same approach can be used to find
+optimal penalties for another model, the Fused Lasso Signal
+Approximator (FLSA).
+
+We used the \verb|flsa| function in version 1.03 of the flsa
+package from CRAN to calculate the FLSA \citep{fused-lasso-path}. Let
+$x\in\RR^d$ be the noisy copy number signal for one chromosome. The
+FLSA solves the following optimization problem:
+\begin{equation}
+  \label{eq:flsa}
+\argmin_{\mu\in\RR^d} 
+\frac 1 2 \sum_{j=1}^d (x_j-\mu_j)^2
++\lambda_1\sum_{j=1}^d|\mu_j|
++\lambda_2\sum_{j=1}^{d-1}|\mu_j-\mu_{j+1}|.
+\end{equation}
+
+First, we take $\lambda_1=0$ since we are concerned with breakpoint
+detection, not signal sparsity. In this section, our aim is to
+determine a parameterization for $\lambda_2$ that we will be able to
+find similar breakpoints in signals of varying sampling density.
+
+We use the same setup that we used to determine optimal penalties for
+cghseg, as described in Section~\ref{variable_density} and shown again
+in Figure~\ref{fig:variable-density-signals-flsa}.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{figures/variable-density-signals}
+  \caption{Simulated signals with different
+  sampling density.}
+  \label{fig:variable-density-signals-flsa}
+\end{figure}
+
+\newpage
+
+In particular, for every signal $i\in\{1,\dots,n\}$, let
+$y_i\in\RR^{d_i}$ be the noisy signals, sampled at positions
+$p_i\in\mathcal X^{d_i}$. To find an optimal penalty for these data,
+first let $\lambda_2 = \lambda d_i^\alpha$. For each signal $i$,
+exponent $\alpha\in\RR$, and tradeoff parameter $\lambda\in\RR^+$, we
+define the optimal smoothing as
+\begin{equation}
+  \label{eq:flsa_lambda}
+  \hat y^{\lambda,\alpha}_i = 
+\argmin_{\mu\in\RR^{d_i}} 
+\frac 1 2 ||y_i-\mu||_2^2
++\lambda d_i^\alpha \sum_{j=1}^{d_i-1} |\mu_j - \mu_{j+1}|.
+\end{equation}
+% \begin{equation}
+%   \label{eq:flsa_lambda}
+%   \hat y^{\lambda,\alpha}_i = 
+% \argmin_{\mu\in\RR^{d_i}} 
+% \frac 1 2 ||y_i-\mu||_2^2
+% +\lambda d_i^\alpha \TV_i(\mu),
+% \end{equation}
+% with the total variation $\TV_i:\RR^{d_i}\rightarrow \RR^+$ defined as
+% \begin{equation}
+%   \label{eq:TV}
+%   \TV_i(x) = \sum_{j=1}^{d_i-1} |x_j - x_{j+1}|.
+% \end{equation}
+
+Then, we define the breakpoint detection error as a function of the
+breaks in the smoothed signal:
+\begin{equation}
+  \label{eq:flsa_e_i_alpha}
+  E_i^\alpha(\lambda) = 
+E^B_{\text{exact}}
+\left[
+\phi\left(
+\hat y^{\lambda,\alpha}_i,p_i
+\right)
+\right],
+\end{equation}
+where the breakpoint function $\phi$ is defined in
+(\ref{eq:breaks_phi}) and the error $E_{\text{exact}}^B$ is defined
+(\ref{eq:exact_breakpoint_cost}).
+
+We plot $E_i^\alpha$ for 2 signals $i$ and several penalty exponents
+$\alpha$ in Figure~\ref{fig:variable-density-berr-flsa}. Note that the
+functions appear to align when $\alpha=1$.
+
+\fig{variable-density-berr-flsa}{Model complexity breakpoint error
+  functions $E_i^\alpha$.}
+
+\newpage
+
+To evaluate which penalty parameter $\alpha$ results in optimal
+fitting and learning, we use $E^*$ and TestErr as defined in
+(\ref{eq:lerr_train}) and (\ref{eq:lerr_test}). These functions
+are plotted in Figure~\ref{fig:variable-density-error-alpha-flsa}, and
+suggest that a value of $\alpha=1$ is optimal.  This analysis suggests
+that taking $\lambda_2=\lambda d_i$ is optimal for breakpoint
+detection using FLSA. This agrees with the observation in
+Chapter~\ref{chapter:bams} that the flsa.norm penalty with a $d_i$
+term works better than the un-normalized flsa penalty.
+
+We conclude by noting that this procedure could also be applied to
+find penalties for FLSA that depend on estimated signal noise~$\hat
+s_i^2$ and length in base pairs~$l_i$. However, we did not pursue this
+since FLSA does not work as well as cghseg in practice on real data,
+as shown in Chapter~\ref{chapter:bams}.
+
+\fig{variable-density-error-alpha-flsa}{Train and test error as a
+  function of penalty exponent $\alpha$. The penalty has a term for
+  the number of points sampled $d_i^\alpha$.}
+
+
+\newpage
+
+\section{Application to real data}
+
+In Sections~\ref{variable_density}-\ref{variable_size}, we found
+optimal cghseg penalties for data with varying sampling density,
+scale, and length. In Section~\ref{combining_penalties}, we also
+demonstrated that these results can be combined. This analysis
+suggests the following penalty, for every signal $i$:
+\begin{equation}
+  \label{eq:composite_penalty}
+  k_i(\lambda) = 
+  \argmin_k
+  \lambda k \hat s_i^2 \sqrt{d_i/l_i}  +
+  ||y_i - \hat y_i^k||^2_2
+\end{equation}
+
+In Table~\ref{tab:penalty-real-data}, we report results of using the
+suggested penalties on the neuroblastoma data set. The normalizations
+suggested by the analysis of simulations do not improve breakpoint
+detection error in the neuroblastoma data set. This observation
+suggests that distribution that generates the real data is more
+complex than the simple simulation model considered in this chapter.
+
+Practically speaking, we still would like to find a penalty with
+optimal breakpoint detection in real data. So, in the next chapter, we
+introduce a new method that uses interval regression to exploit the
+breakpoint annotations and to learn an optimal penalty from real data.
+
+\tab{penalty-real-data}{Breakpoint detection error of cghseg on the
+  neuroblastoma data set, with 1 row for each penalty. The exponent of
+  the points $d_i$, length $l_i$, and variance $\hat s_i$ terms in the
+  penalty is shown with the train and test error in percent. }
+
+%\bibliographystyle{abbrvnat}
+\bibliography{refs}
+
+\end{document}
