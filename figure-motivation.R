@@ -1,4 +1,5 @@
 works_with_R("3.1.0",
+             RColorBrewer="1.0",
              directlabels="2014.4.25",
              breakpointError="1.0",
              Segmentor3IsBack="1.8",
@@ -129,6 +130,9 @@ for(change.param in names(params)){
   }
 }
 
+model.colors <- brewer.pal(3, "Dark2")
+names(model.colors) <- c("truth", "mean", "var")
+
 ## Also construct the error imprecision curves?
 error.base <- 1
 error.imprecision <- 1
@@ -213,7 +217,7 @@ ggplot()+
   theme(panel.margin=grid::unit(0, "cm"))
 print(matchPlot)
 
-alpha.rect <- 3/10
+alpha.rect <- 5/10
 segments$facet2 <- ffactor("truth")
 changes$facet2 <- ffactor("truth")
 mod.ord <- c("truth", "mean", "var")
@@ -239,8 +243,8 @@ ggplot()+
   geom_segment(aes(first-1/2, mean, xend=last+1/2, yend=mean,
                    color=what),
                data=segments)+
-  scale_fill_brewer(type="qual", breaks=mod.ord)+
-  scale_color_brewer(type="qual", breaks=mod.ord)
+  scale_fill_manual(values=model.colors)+
+  scale_color_manual(values=model.colors)
 pdf("figure-motivation-modelOnly.pdf")
 print(modelOnly)
 dev.off()
@@ -259,8 +263,8 @@ ggplot()+
   theme(panel.margin=grid::unit(0, "cm"))+
   geom_vline(aes(xintercept=change.after+1/2, color=what),
              data=changes, size=vline.size)+
-  scale_fill_brewer(type="qual", breaks=mod.ord)+
-  scale_color_brewer(type="qual", breaks=mod.ord)
+  scale_fill_manual(values=model.colors)+
+  scale_color_manual(values=model.colors)
 pdf("figure-motivation-breaksOnly.pdf")
 print(breaksOnly)
 dev.off()
@@ -298,16 +302,13 @@ ggplot()+
   geom_point(aes(base, signal, color=what), data=signals, pch=1)+
   ## geom_vline(aes(xintercept=base+1/2, color=what),
   ##            data=guesses, lty="dashed", size=2, show_guide=TRUE)+
-  geom_vline(aes(xintercept=change.after+1/2, color=what),
-             data=changes, lty="dashed")+
-  scale_color_manual(values=c(data="black", truth="green", estimate="blue"))+
-  scale_fill_manual(values=c(data="black", truth="green"))+
+  geom_vline(aes(xintercept=change.after+1/2),
+             data=changes, lty="dashed", color=model.colors[["truth"]])+
   scale_x_continuous("base position",
                      breaks=segment.first)+
   geom_rect(aes(xmin=first-1/2, xmax=last+1/2,
-                ymin=mean-sd, ymax=mean+sd,
-                fill=what),
-            data=segments, alpha=2/10, color=NA)+
+                ymin=mean-sd, ymax=mean+sd),
+            data=segments, alpha=2/10, color=NA, fill=model.colors[["truth"]])+
   geom_segment(aes(first-1/2, mean, xend=last+1/2, yend=mean, color=what),
                data=segments)+
   facet_grid(facet ~ .)+
