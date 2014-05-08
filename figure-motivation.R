@@ -177,6 +177,7 @@ ggplot()+
   theme(panel.margin=grid::unit(0, "cm"))
 print(sig.model.breaks)
 
+ffactor <- function(x)factor(x, c("truth", paste(2:9, "segments")))
 matching <-
   list(segments=model.segments,
        changes=model.changes)
@@ -184,6 +185,8 @@ for(data.name in names(matching)){
   df <- subset(matching[[data.name]],
                change.param == model.type &
                segments > 1)
+  df$facet <- ifelse(df$change.param=="mean",
+                     "change in mean", "change in variance")
   df$facet2 <-
     ffactor(paste(df$segments, "segments"))
   matching[[data.name]] <- df
@@ -211,7 +214,6 @@ ggplot()+
 print(matchPlot)
 
 alpha.rect <- 3/10
-ffactor <- function(x)factor(x, c("truth", paste(2:9, "segments")))
 segments$facet2 <- ffactor("truth")
 changes$facet2 <- ffactor("truth")
 mod.ord <- c("truth", "mean", "var")
@@ -227,7 +229,7 @@ ggplot()+
                data=matching$segments)+
   scale_x_continuous("base position",
                      breaks=segment.first)+
-  facet_grid(facet2 ~ change.param)+
+  facet_grid(facet2 ~ facet)+
   theme_bw()+
   theme(panel.margin=grid::unit(0, "cm"))+
   geom_rect(aes(xmin=first-1/2, xmax=last+1/2,
@@ -239,6 +241,9 @@ ggplot()+
                data=segments)+
   scale_fill_brewer(type="qual", breaks=mod.ord)+
   scale_color_brewer(type="qual", breaks=mod.ord)
+pdf("figure-motivation-modelOnly.pdf")
+print(modelOnly)
+dev.off()
 
 vline.size <- 1
 breaksOnly <- 
@@ -249,13 +254,17 @@ ggplot()+
            data=matching$changes, show_guide=TRUE, size=vline.size)+
   scale_x_continuous("base position",
                      breaks=segment.first)+
-  facet_grid(facet2 ~ change.param)+
+  facet_grid(facet2 ~ facet)+
   theme_bw()+
   theme(panel.margin=grid::unit(0, "cm"))+
   geom_vline(aes(xintercept=change.after+1/2, color=what),
              data=changes, size=vline.size)+
   scale_fill_brewer(type="qual", breaks=mod.ord)+
   scale_color_brewer(type="qual", breaks=mod.ord)
+pdf("figure-motivation-breaksOnly.pdf")
+print(breaksOnly)
+dev.off()
+
 
 two.sigs <- 
 ggplot()+
@@ -287,8 +296,8 @@ guesses$what <- "estimate"
 two.bad <- 
 ggplot()+
   geom_point(aes(base, signal, color=what), data=signals, pch=1)+
-  geom_vline(aes(xintercept=base+1/2, color=what),
-             data=guesses, lty="dashed", size=2, show_guide=TRUE)+
+  ## geom_vline(aes(xintercept=base+1/2, color=what),
+  ##            data=guesses, lty="dashed", size=2, show_guide=TRUE)+
   geom_vline(aes(xintercept=change.after+1/2, color=what),
              data=changes, lty="dashed")+
   scale_color_manual(values=c(data="black", truth="green", estimate="blue"))+

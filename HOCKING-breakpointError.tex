@@ -90,16 +90,18 @@
 
   
   \begin{abstract}
-This paper discusses methods for accurately detecting the
-breakpoints in a piecewise constant signal $\mu$, given some noisy
-observations $y$. In the previous chapter, we saw that that models
-with different penalties like flsa and flsa.norm have
-different breakpoint detection accuracy. This observation naturally
-poses a question: what is the penalty that will result in the best
-breakpoint detection? In this chapter, I discuss a method that can be
-used to find these penalties, given certain assumptions about the
-data.
-\end{abstract}
+    We consider the multiple breakpoint detection problem, which is
+    concerned with detecting the locations of several distinct changes
+    in a one-dimensional noisy time series. We propose the
+    breakpointError, a function that can be used to evaluate estimated
+    change-point locations, given the known locations of true
+    change-points. We discuss an application of the breakpointError to
+    calibrating penalty functions for change-point detection. Finally,
+    we show how to relax the breakpointError to obtain an annotation
+    error function which can be used more readily in practice on real
+    data. A fast C implementation of an algorithm that computes the
+    breakpointError is available as an R package on R-Forge.
+  \end{abstract}
 
   
   \begin{motscles}
@@ -125,7 +127,21 @@ data.
   \label{fig:motivation}
 \end{figure}
 
-\subsection{Chapter summary}
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{figure-motivation-modelOnly}
+  \caption{Two simulated signals with the same change-points.}
+  \label{fig:motivation}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{figure-motivation-breaksOnly}
+  \caption{Two simulated signals with the same change-points.}
+  \label{fig:motivation}
+\end{figure}
+
+
 
 This chapter presents two contributions:
 \begin{itemize}
