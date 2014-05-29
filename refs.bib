@@ -956,7 +956,23 @@ note = {\url{http://www.pnas.org/content/106/6/1826.abstract}},
 journal = {Proceedings of the National Academy of Sciences} 
 }
 
+@article{pelt,
+  title={Optimal detection of changepoints with a linear computational cost},
+  author={Killick, Rebecca and Fearnhead, Paul and Eckley, IA},
+  journal={Journal of the American Statistical Association},
+  volume={107},
+  number={500},
+  pages={1590--1598},
+  year={2012},
+  publisher={Taylor \& Francis}
+}
 
+
+@Misc{levy-metric,
+  author = 	 {VM Zolotarev},
+  title = 	 {Encyclopedia of Mathematics},
+  chapter = 	 {L\'evy metric},
+  year = 	 2014}
 
 @Article{haarseg,
   author = 	 {E. Ben-Yaacov and Y. C. Eldar},
@@ -969,15 +985,6 @@ journal = {Proceedings of the National Academy of Sciences}
   pages = 	 {i139--i145},
   month = 	 {September}}
 
-@unpublished{pelt,
-  author = 	 {R. Killick and P. Fearnhead and I. A. Eckley},
-  title = 	 {Optimal detection of changepoints with a linear
-                  computational cost},
-year = 2011,
-  note = 	 {arXiv:1101.1438},
-  eprint = 	 {arXiv:1101.1438}
-}
-
   @Manual{alphahull,
     title = {alphahull: Generalization of the convex hull of a sample of points in the
 plane},
@@ -987,6 +994,21 @@ plane},
     url = {\url{http://CRAN.R-project.org/package=alphahull}},
   }
 
+
+@Article{segmentor,
+AUTHOR = {Cleynen, Alice and Koskas, Michel and Lebarbier, Emilie and Rigaill, Guillem and Robin, Stephane},
+TITLE = {Segmentor3IsBack: an R package for the fast and exact segmentation of Seq-data},
+JOURNAL = {Algorithms for Molecular Biology},
+VOLUME = {9},
+YEAR = {2014},
+NUMBER = {1},
+PAGES = {6},
+URL = {http://www.almob.org/content/9/1/6},
+DOI = {10.1186/1748-7188-9-6},
+PubMedID = {24612691},
+ISSN = {1748-7188},
+ABSTRACT = {BACKGROUND:Change point problems arise in many genomic analyses such as the detection of copy number variations or the detection of transcribed regions. The expanding Next Generation Sequencing technologies now allow to locate change points at the nucleotide resolution.RESULTS:Because of its complexity which is almost linear in the sequence length when the maximal number of segments is constant, and as its performance had been acknowledged for microarrays, we propose to use the Pruned Dynamic Programming algorithm for Seq-experiment outputs. This requires the adaptation of the algorithm to the negative binomial distribution with which we model the data. We show that if the dispersion in the signal is known, the PDP algorithm can be used, and we provide an estimator for this dispersion. We describe a compression framework which reduces the time complexity without modifying the accuracy of the segmentation. We propose to estimate the number of segments via a penalized likelihood criterion. We illustrate the performance of the proposed methodology on RNA-Seq data.CONCLUSIONS:We illustrate the results of our approach on a real dataset and show its good performance. Our algorithm is available as an R package on the CRAN repository.},
+}
 
 
 @Article{gada,
@@ -1659,7 +1681,13 @@ Title = {Graph-Structured Multi-task Regression and an Efficient Optimization Me
 Year = 2010,
 note = {arXiv:1005.3579}
 }
-%url= {http://arxiv.org/abs/1005.3579v1}
+
+@misc{perf-eval-framework,
+Author = {Morgan Pierre-Jean and Guillem J Rigaill and Pierre Neuvial},
+Title = {A performance evaluation framework of DNA copy number analysis methods in cancer studies; application to SNP array data segmentation methods},
+Year = 2014,
+note = {arXiv:1402.7203}
+}
 
 @misc{Fujishige06theminimum-norm-point,
     author = {S. Fujishige and T. Hayashi and S. Isotani},

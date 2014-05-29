@@ -8,7 +8,7 @@
 \usepackage[T1]{fontenc}
 
 
-\usepackage{amsmath,amsthm}
+\usepackage{amsmath,amsthm,amsfonts,amssymb}
 \newtheorem{definition}{Definition}
 \newtheorem{lemma}{Lemma}
 \usepackage{dtklogos}
@@ -143,15 +143,21 @@ B=\{1,\dots,P-1\}$ be all bases after which a breakpoint is possible.
   D_{p+1}$. 
 \end{definition}
 
+For a series with $P$ positions, there is a minimum of 0 breakpoints
+($D_1=\cdots=D_P$) and a maximum of $P-1$ breakpoints ($D_1 \neq
+\cdots \neq D_P$).
+
 We are given a sample of size $d \leq D$ of data $(p_1, y_1), \dots,
 (p_d, y_d)$, with positions $p_i\in\mathcal P$ and noisy observations
 $y_i\sim D_{p_i}$ for all samples $i\in\{1, \dots d\}$. 
 
 For example, consider the normal distributions and simulated data
-shown in Figure~\ref{fig:motivation}. There are $P=500$ distinct
-positions, $d=100$ simulated samples, and 2 breakpoints: $\{300,
-400\}$.
-
+shown in Figure~\ref{fig:motivation}. The 2 panels in the figure show
+different, separate segmentation problems. The top panel shows a
+problem with two changes in mean, and the bottom panel shows two
+changes in variance. For both panels in the figure, there are $P=500$
+distinct positions, $d=100$ simulated samples, and 2 breakpoints:
+$\{300, 400\}$.
 
 \begin{figure}[h!]
   \centering
@@ -168,27 +174,109 @@ positions, $d=100$ simulated samples, and 2 breakpoints: $\{300,
   \label{fig:motivation}
 \end{figure}
 
-t corresponding
-positions $\mathbf p\in\mathcal X^{d}$, sorted in increasing order
-$p_1<\cdots<p_d$.
+\subsection{Maximum likelihood segmentation algorithms}
 
-Without knowing the underlying probability distributions, there is a
-minimum of 0 breakpoints ($D_1=\cdots=D_P$) or a maximum of $P-1$
-breakpoints ($D_1 \neq \cdots \neq D_P$).
+A segmentation algorithm takes the $d$ sampled data points as input,
+and returns a list of estimated distributions and/or breakpoints. In
+this section, we will review one class of segmentation algorithms
+called maximum likelihood segmentation.
+
+A maximum likelihood segmentation model for multiple breakpoints in
+the mean of a normal distribution was proposed by
+\citet{statistical-approach}. Let $\mathbf y = \left[
+  \begin{array}{ccc}
+    y_1 & \cdots & y_d
+  \end{array}
+\right]^\intercal \in \RR^d$ be the vector formed by the $d$
+sampled data points, and let  $\mathbf p = \left[
+  \begin{array}{ccc}
+    p_1 & \cdots & p_d
+  \end{array}
+\right]^\intercal \in \mathcal P^d$ be the corresponding vector of
+positions, ordered such that $p_1 < \cdots < p_d$. Then for any number
+of segments $k\in\{1, \dots, d\}$, the estimated mean $\mathbf{\hat
+  y}^k\in\RR^d$ is defined as
+\begin{equation}
+\label{eq:yhat^k}
+\begin{aligned}
+\mathbf{\hat  y}^k = &\argmin_{\mathbf x \in \RR^d} &&  ||\mathbf y - \mathbf x||^2_2
+\\
+&\text{subject to} && k-1=\sum_{j=1}^{d-1} 1_{x_j\neq x_{j+1}},
+\end{aligned}
+\end{equation}
+where $||\mathbf x||^2_2=\sum_{j=1}^d x_j^2$ is the squared $\ell_2$
+norm. Note that for a fixed $k_{\text{max}}\leq d$, we can quickly
+calculate $\mathbf{\hat y}^k$ for all $k\in\{1,\dots,k_{\text{max}}\}$
+using pruned dynamic programming \citep{pruned-dp}. For any model size
+$k$, the estimated variance $\hat \sigma^2_k\in\RR^+$ is defined
+as the mean of the squared residuals:
+\begin{equation}
+  \label{eq:sigmahat}
+  \hat \sigma_k^2 = ||\mathbf y - \mathbf{\hat y}^k||^2_2/d.
+\end{equation}
+
+The derivation is similar for the model of multiple breakpoints in the
+variance of a normal distribution \citep{pelt,segmentor}. For both
+models, we visually represent the true distribution and estimates for
+$k\in\{2, \dots, 5\}$ in Figure~\ref{fig:motivation-modelOnly}. 
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{figure-motivation-modelOnly}
+  \vskip -0.5cm
+  \caption{Comparing true and estimated distributions is one approach
+    to segmentation model selection/evaluation but is not the subject
+    of this paper. \textbf{Top 2 panels}: the same reference/true
+    signals as in Figure~\ref{fig:motivation}. \textbf{Others}: estimated
+    maximum likelihood models for $k\in\{2, \dots, 5\}$ segments.}
+  \label{fig:motivation-modelOnly}
+\end{figure}
+
+\newpage
+
+The segmentation model selection problem may be posed as follows. Of
+the 4 estimated segmentation models $k\in\{2, \dots, 5\}$, which is
+the closest to the true model?
+
+One method for segmentation model selection is to compare the true
+distribution with the estimated distributions
+(Figure~\ref{fig:motivation-modelOnly}), and choose the estimate whose
+distribution is closest to the true distribution. Assuming the true
+probability distribution is available, one could compare it with the
+estimates using a distance function such as the earth mover's distance
+\citep{earth-mover}. However, the true distribution is not available
+in practice on real data, so in this paper we will not explore
+segmentation model selection via comparing distributions.
+
+Instead, we propose a method for comparing the true and estimated
+breakpoints. For any $d$-vectors of data and positions $(\mathbf x,
+\mathbf p)$, we estimate the breakpoint locations using
+%the position nearest to the center
+\begin{equation}
+  \label{eq:breaks_phi}
+\phi(\mathbf{x}, \mathbf p)
+= \big\{
+\lfloor 
+(p_j+p_{j+1})/2
+\rfloor
+\text{ for all }j\in\{1,\dots,d-1\}\text{ such that }
+\mathbf x_j\neq \mathbf x_{j+1}
+\big\}.
+\end{equation}
+Thus for any model size $k$, we estimate the breakpoint positions
+using $\phi(\mathbf{\hat y}, \mathbf p)$.
+
+We would like to compare these estimated breakpoints to the true set
+of breakpoints
+\begin{equation}
+  \label{eq:breaks_B}
+  B = \{j\in\mathbb B:D_j\neq D_{j+1}\}.
+\end{equation}
 
 
 For the simulations we explore later in this chapter, we assume there
 is some latent signal $\mu\in\RR^P$. 
 
-This chapter presents two contributions:
-\begin{itemize}
-\item Given a latent signal $\mu$, we define a precise breakpoint
-  detection error function, and discuss its relationship to the
-  annotation error defined in Chapter~\ref{chapter:bams}.
-\item We use the error function to determine optimal penalties for
-  breakpoint detection in databases of simulated signals of varying
-  sampling density, noise, and length.
-\end{itemize}
 
 In recent years, several authors have developed a theory of minimal
 penalties that can be used to accurately recover a signal from noisy
@@ -233,18 +321,6 @@ the breakpoint detection error.
 
 \begin{figure}
   \centering
-  \includegraphics[width=\textwidth]{figure-motivation-modelOnly}
-  \vskip -0.5cm
-  \caption{Comparing true and estimated distributions is one approach
-    to segmentation model selection/evaluation but is not the subject
-    of this paper. \textbf{Top 2 panels}: the same reference/true
-    signals as in Figure~\ref{fig:motivation}. \textbf{Others}: estimated
-    maximum likelihood models for $k\in\{2, \dots, 5\}$ segments.}
-  \label{fig:motivation-modelOnly}
-\end{figure}
-
-\begin{figure}
-  \centering
   \includegraphics[width=\textwidth]{figure-motivation-breaksOnly}
   \vskip -0.5cm
   \caption{Same as Figure~\ref{fig:motivation-modelOnly}, but showing
@@ -270,58 +346,6 @@ the breakpoint detection error.
   \label{fig:motivation-breakpointError}
 \end{figure}
 
-
-The top two panels of Figure~\ref{fig:TODO} show two different
-time-varying normal distributions with the same breakpoints: the
-left panel shows a change in mean, and the right panel shows a change
-in variance. Some simulated data from these distributions are also
-shown.  There are several ways to measure the distance between the
-true and estimated probability distributions.  cite earth mover
-distances \citep{earth-mover}, which is the same as the first
-Wasserstein distance.
-
-\subsection{Maximum likelihood segmentation}
-
-We will focus on the cghseg model, which
-defines the estimated signal with $k$ segments as
-\begin{equation}
-\label{eq:yhat^k}
-\begin{aligned}
-\hat y^k = &\argmin_{x\in\RR^d} &&  ||y - x||^2_2
-\\
-&\text{subject to} && k-1=\sum_{j=1}^{d-1} 1_{x_j\neq x_{j+1}}.
-\end{aligned}
-\end{equation}
-Note that we can quickly calculate $\hat y^k$ for
-$k\in\{1,\dots,k_{\text{max}}\}$ using pruned dynamic programming
-\citep{pruned-dp}. We then estimate the breakpoint locations using the mean
-\begin{equation}
-  \label{eq:breaks_phi}
-\phi(\hat y^k,p)
-= \big\{
-\lfloor 
-(p_j+p_{j+1})/2
-\rfloor
-\text{ for all }j\in\{1,\dots,d-1\}\text{ such that }
-\hat y^k_j\neq \hat y^k_{j+1}
-\big\}.
-\end{equation}
-Note that this is a function $\phi:\RR^d\times \mathcal X^d\rightarrow
-2^{\mathbb B}$ that gives the positions after which there is a break
-in $\hat y^k$. We would like to compare these estimated breakpoints to
-the exact set of breakpoints in the simulated signal
-\begin{equation}
-  \label{eq:breaks_B}
-  B = \phi\left(\mu,
-\left[
-  \begin{array}{ccc}
-    1 & \cdots & P
-  \end{array}
-\right]^\prime
-\right)
-=
-\{j\in\mathbb B:\mu_j\neq\mu_{j+1}\}.
-\end{equation}
 
 
 \newpage
@@ -1576,6 +1600,9 @@ breakpoint annotations and to learn an optimal penalty from real data.
   neuroblastoma data set, with 1 row for each penalty. The exponent of
   the points $d_i$, length $l_i$, and variance $\hat s_i$ terms in the
   penalty is shown with the train and test error in percent. }
+
+TODO: acknowledge Marco Cuturi for references about distance functions
+for comparing probability distributions.
 
 %\bibliographystyle{abbrvnat}
 \bibliography{refs}
