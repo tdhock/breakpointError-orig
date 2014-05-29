@@ -1,4 +1,5 @@
 works_with_R("3.1.0",
+             tikzDevice="0.7.0",
              RColorBrewer="1.0.5",
              directlabels="2014.4.25",
              breakpointError="1.0",
@@ -159,18 +160,34 @@ p <- ggplot(err.df, aes(segments,error))+
   facet_grid(model.type ~ change.param)+
   theme_bw()+
   theme(panel.margin=grid::unit(0, "cm"))
+match.err <- subset(err.df, model.type==change.param)
+space <- 1/3
+p <- ggplot(match.err, aes(segments,error))+
+  geom_line(aes(size=type,colour=type,linetype=type))+
+  scale_linetype_manual(values=fp.fn.linetypes)+
+  scale_colour_manual(values=fp.fn.colors)+
+  scale_size_manual(values=fp.fn.sizes)+
+  facet_grid(. ~ change.param, labeller=function(var, val){
+    ifelse(val=="mean", "change in mean", "change in variance")
+  })+
+  theme_bw()+
+  theme(panel.margin=grid::unit(0, "cm"))+
+  xlim(1-space, 5+space)
 dl <- direct.label(p+guides(linetype="none",colour="none",size="none"),
                    dl.combine("first.polygons","last.polygons"))
+options(tikzMetricsDictionary="tikzMetrics")
+tikz("figure-motivation-breakpointError.tex",h=2,w=6)
 print(dl)
+dev.off()
 
-base.breaks <- c(segment.first, LAST.BASE)
+base.breaks <- c(1, 300, 400, LAST.BASE)
 sig.model.breaks <- 
 ggplot()+
   geom_point(aes(base, signal), data=signals, pch=1)+
   geom_vline(aes(xintercept=change.base+1/2,
                color=model.type, linetype=model.type),
            data=model.changes, show_guide=TRUE)+
-  scale_x_continuous("base position",
+  scale_x_continuous("position",
                      breaks=base.breaks)+
   facet_grid(segments ~ change.param)+
   theme_bw()+
@@ -183,7 +200,7 @@ ggplot()+
   geom_vline(aes(xintercept=change.base+1/2,
                color=model.type, linetype=model.type),
            data=model.changes, show_guide=TRUE)+
-  scale_x_continuous("base position",
+  scale_x_continuous("position",
                      breaks=base.breaks)+
   facet_grid(segments ~ change.param)+
   theme_bw()+
@@ -219,7 +236,7 @@ ggplot()+
   geom_vline(aes(xintercept=change.base+1/2,
                color=model.type, linetype=model.type),
            data=matching$changes, show_guide=TRUE)+
-  scale_x_continuous("base position",
+  scale_x_continuous("position",
                      breaks=base.breaks)+
   facet_grid(segments ~ change.param)+
   theme_bw()+
@@ -241,7 +258,7 @@ ggplot()+
   geom_segment(aes(first.base-1/2, seg.mean, xend=last.base+1/2, yend=seg.mean,
                    color=mtype(model.type)),
                data=matching$segments)+
-  scale_x_continuous("base position",
+  scale_x_continuous("position",
                      breaks=base.breaks)+
   facet_grid(facet2 ~ facet)+
   theme_bw()+
@@ -269,7 +286,7 @@ ggplot()+
   geom_vline(aes(xintercept=change.base+1/2,
                color=mtype(model.type)),
            data=matching$changes, show_guide=TRUE, linetype="dashed")+
-  scale_x_continuous("base position",
+  scale_x_continuous("position",
                      breaks=base.breaks)+
   facet_grid(facet2 ~ facet)+
   theme_bw()+
@@ -291,7 +308,7 @@ ggplot()+
              data=changes, lty="dashed")+
   scale_color_manual(values=c(data="black", model="green"))+
   scale_fill_manual(values=c(data="black", model="green"))+
-  scale_x_continuous("base position",
+  scale_x_continuous("position",
                      breaks=base.breaks)+
   geom_rect(aes(xmin=first-1/2, xmax=last+1/2,
                 ymin=mean-sd, ymax=mean+sd,
@@ -318,7 +335,7 @@ ggplot()+
   ##            data=guesses, lty="dashed", size=2, show_guide=TRUE)+
   geom_vline(aes(xintercept=change.after+1/2),
              data=changes, lty="dashed", color=model.colors[["truth"]])+
-  scale_x_continuous("base position",
+  scale_x_continuous("position",
                      breaks=base.breaks)+
   geom_rect(aes(xmin=first-1/2, xmax=last+1/2,
                 ymin=mean-sd, ymax=mean+sd),
