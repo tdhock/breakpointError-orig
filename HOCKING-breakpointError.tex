@@ -72,7 +72,7 @@
  \arxiv{math.PR/00000000} % Si disponible
 
   \titre{A breakpoint detection error function for segmentation model
-  selection}
+  selection and validation}
   \titrecourant{Manuel du J-SFdS}
 
   \begin{InfosAuteurs}
@@ -190,6 +190,15 @@ construct optimal penalties given certain assumptions about the signal
 and noise. But we define optimality in terms of breakpoint detection
 error, so I will first devote several pages to a precise definition of
 the breakpoint detection error.
+
+The top two panels of Figure~\ref{fig:TODO} show two different
+time-varying normal distributions with the same change-points: the
+left panel shows a change in mean, and the right panel shows a change
+in variance. Some simulated data from these distributions are also
+shown.  There are several ways to measure the distance between the
+true and estimated probability distributions.  cite earth mover
+distances \citep{earth-mover}, which is the same as the first
+Wasserstein distance.
 
 \section{Properties of an ideal error function for breakpoint detection}
 \label{breakpoint_error}
