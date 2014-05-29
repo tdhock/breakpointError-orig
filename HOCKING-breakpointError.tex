@@ -244,9 +244,10 @@ distribution with the estimated distributions
 distribution is closest to the true distribution. Assuming the true
 probability distribution is available, one could compare it with the
 estimates using a distance function such as the earth mover's distance
-\citep{earth-mover}. However, the true distribution is not available
-in practice on real data, so in this paper we will not explore
-segmentation model selection via comparing distributions.
+\citep{earth-mover}, or some other distance function. However, the
+true distribution is not available in practice on real data, so in
+this paper we will not explore segmentation model selection via
+comparing distributions.
 
 Instead, we propose a method for comparing the true and estimated
 breakpoints. For any $d$-vectors of data and positions $(\mathbf x,
@@ -264,19 +265,68 @@ breakpoints. For any $d$-vectors of data and positions $(\mathbf x,
 \big\}.
 \end{equation}
 Thus for any model size $k$, we estimate the breakpoint positions
-using $\phi(\mathbf{\hat y}, \mathbf p)$.
-
-We would like to compare these estimated breakpoints to the true set
-of breakpoints
+using $\phi(\mathbf{\hat y}^k, \mathbf p)$.
+In Figure~\ref{fig:motivation-breaksOnly}, we compare
+these estimated breakpoints to the true set of breakpoints
 \begin{equation}
   \label{eq:breaks_B}
   B = \{j\in\mathbb B:D_j\neq D_{j+1}\}.
 \end{equation}
 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{figure-motivation-breaksOnly}
+  \vskip -0.5cm
+  \caption{Same as Figure~\ref{fig:motivation-modelOnly}, but showing
+    breakpoints instead of distributions. This paper proposes to
+    compare the true and estimated breakpoints with the
+    breakpointError function, which can be used for any reference/true
+    distribution and any type of change. }
+  \label{fig:motivation-breaksOnly}
+\end{figure}
 
-For the simulations we explore later in this chapter, we assume there
-is some latent signal $\mu\in\RR^P$. 
+\newpage
 
+Figure~\ref{fig:motivation-breaksOnly} clearly shows 3 distinct types
+of errors that are possible in estimating the breakpoint positions:
+\begin{description}
+\item[False negative (FN)] for both data sets, the models with 2
+segments are suboptimal because they only detect 1 of the 2
+breakpoints.
+\item[False positive (FP)] for both data sets, the models with 4 and 5
+  segments are suboptimal since they detect too many breakpoints.
+\item[Imprecision (I)] of the two models with 3 segments, the
+  breakpoints estimated for the change in variance data are more
+  precise (closer to the true breakpoint positions).
+\end{description}
+
+This paper proposes the breakpointError function
+(Figure~\ref{fig:motivation-breakpointError}, which can be used to
+quantify these intuitive observations. It can be computed to quantify
+how well a set of estimated breakpoint postions matches a true or
+reference set of breakpoints.
+
+
+\begin{figure}[H]
+  \centering
+  \input{figure-motivation-breakpointError}
+  \vskip -0.7cm
+  \caption{For the same data shown in
+    Figure~\ref{fig:motivation-breaksOnly}, we computed the
+    breakpointError function (E) and its components. False positives
+    (FP) occur when there are more estimated than true breakpoints,
+    and false negatives (FN) are the opposite. For the correct model
+    size (3 segments = 2 breakpoints), the imprecision function (I)
+    quantifies the distance between the true and estimated breakpoint
+    positions.}
+  \label{fig:motivation-breakpointError}
+\end{figure}
+
+
+
+\newpage
+
+\section{Related Work}
 
 In recent years, several authors have developed a theory of minimal
 penalties that can be used to accurately recover a signal from noisy
@@ -316,39 +366,7 @@ and noise. But we define optimality in terms of breakpoint detection
 error, so I will first devote several pages to a precise definition of
 the breakpoint detection error.
 
-
-
-
-\begin{figure}
-  \centering
-  \includegraphics[width=\textwidth]{figure-motivation-breaksOnly}
-  \vskip -0.5cm
-  \caption{Same as Figure~\ref{fig:motivation-modelOnly}, but showing
-    breakpoints instead of distributions. This paper proposes to
-    compare the true and estimated breakpoints with the
-    breakpointError function, which can be used for any reference/true
-    distribution and any type of change. }
-  \label{fig:motivation-breaksOnly}
-\end{figure}
-
-\begin{figure}
-  \centering
-  \input{figure-motivation-breakpointError}
-  \vskip -0.5cm
-  \caption{Two signals with the same breakpoints (vertical dashed
-    lines) but different distributional changes. Black circles show
-    $d=100$ sampled data points drawn from normal distributions defined on
-    bases $\mathcal X = \in\{1, \dots, P=500\}$. 
-    Horizontal line segments and shaded
-    bands show mean $\pm$ one standard deviation. The goal of
-    segmentation is to recover the distributions and/or breakpoints,
-    using only the sampled data points.}
-  \label{fig:motivation-breakpointError}
-\end{figure}
-
-
-
-\newpage
+\section{Definition of the breakpointError}
 
 Given some guess of the breakpoint locations $G\subseteq\mathbb B$,
 the object of this section is to define a function ${E }(G)$
