@@ -123,21 +123,34 @@
 \begin{figure}
   \centering
   \includegraphics[width=\textwidth]{figure-motivation}
-  \caption{Two simulated signals with the same change-points.}
+  \caption{Two signals with the same breakpoints (vertical dashed
+    lines) but different distributional changes. Black circles show
+    100 sampled data points drawn from normal distributions defined on
+    bases $D\in\{1, \dots, 500\}$. Horizontal line segments and shaded
+    bands show mean $\pm$ one standard deviation. The goal of
+    segmentation is to recover the distributions and/or change-points,
+    using only the sampled data points.}
   \label{fig:motivation}
 \end{figure}
 
 \begin{figure}
   \centering
   \includegraphics[width=\textwidth]{figure-motivation-modelOnly}
-  \caption{Two simulated signals with the same change-points.}
+  \caption{Comparing true and estimated distributions. \textbf{Top 2
+      panels}: the same reference/true signals as in
+    Figure~{fig:motivation}. \textbf{Others}: estimated maximum
+    likelihood models for $k\in\{2, \dots, 5\}$ segments.}
   \label{fig:motivation-modelOnly}
 \end{figure}
 
 \begin{figure}
   \centering
   \includegraphics[width=\textwidth]{figure-motivation-breaksOnly}
-  \caption{Two simulated signals with the same change-points.}
+  \caption{Same as Figure~{fig:motivation-modelOnly}, but showing
+    breakpoints instead of distributions. This paper proposes to
+    compare the true and estimated breakpoints with the
+    breakpointError function, which can be used for any reference/true
+    distribution and any type of change. }
   \label{fig:motivation-breaksOnly}
 \end{figure}
 
