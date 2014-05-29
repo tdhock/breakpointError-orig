@@ -291,7 +291,7 @@ Figure~\ref{fig:motivation-breaksOnly} clearly shows 3 distinct types
 of errors that are possible in estimating the breakpoint positions:
 \begin{description}
 \item[False negative (FN)] for both data sets, the models with 2
-segments are suboptimal because they only detect 1 of the 2
+segments are suboptimal because they only detect 1 of the 2 true
 breakpoints.
 \item[False positive (FP)] for both data sets, the models with 4 and 5
   segments are suboptimal since they detect too many breakpoints.
@@ -301,7 +301,7 @@ breakpoints.
 \end{description}
 
 This paper proposes the breakpointError function
-(Figure~\ref{fig:motivation-breakpointError}, which can be used to
+(Figure~\ref{fig:motivation-breakpointError}), which can be used to
 quantify these intuitive observations. It can be computed to quantify
 how well a set of estimated breakpoint postions matches a true or
 reference set of breakpoints.
@@ -318,7 +318,8 @@ reference set of breakpoints.
     and false negatives (FN) are the opposite. For the correct model
     size (3 segments = 2 breakpoints), the imprecision function (I)
     quantifies the distance between the true and estimated breakpoint
-    positions.}
+    positions. The breakpointError is the sum of the other components
+    (E=FP+FN+I).}
   \label{fig:motivation-breakpointError}
 \end{figure}
 
