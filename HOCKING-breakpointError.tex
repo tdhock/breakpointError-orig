@@ -68,7 +68,7 @@
 
 % TODO: UNCOMMENT frontmatter for publication!
 
-\begin{frontmatter}
+%\begin{frontmatter}
   
   \titre{A breakpoint detection error function for segmentation model
   selection and validation}
@@ -105,7 +105,7 @@
 
 \tableofcontents
 
-\end{frontmatter}
+%\end{frontmatter}
 
   % infos fournies par l'éditeur, laisser vide
   % \volume{}
@@ -138,25 +138,25 @@ The goal of a segmentation model or algorithm is to divide a series of
 data into distinct segments. A major application of segmentation
 models is in detecting changes in copy number in cancer, using
 technologies such as array comparative genomic hybridization
-\citep{PSS98}. In this biological application, the goal is to detect
-the precise base pair or position after which there is a change in
-copy number.
+\citep{PSS98}. In these noisy biological data sets, the goal of
+segmentation is to detect the precise base pairs or genomic positions after
+which there are changes in copy number.
 
-A new method for supervised segmentation was proposed by
-\citet{HOCKING-breakpoints}, who created an annotation database
-containing visually-determined regions with breakpoints or no
+A new method for supervised segmentation of copy number data was
+proposed by \citet{HOCKING-breakpoints}, who created an annotation
+database containing visually-determined regions with breakpoints or no
 breakpoints. This line of research was continued by
 \citet{HOCKING-penalties}, who proposed to use the annotated regions
 to learn a penalty function for optimal breakpoint detection. Finally,
-\citet{SegAnnDB} proposed an computer vision web site for interactive
+\citet{SegAnnDB} proposed a computer vision web site for interactive
 segmentation analysis using annotated regions. All of these supervised
 methods depend critically on the definition of the visually-determined
 annotated region database, which is used to compute an annotation
 error function. This paper continues this line of research by defining
 the breakpointError function, which uses the true breakpoints to
-precisely compute the accuracy of a breakpoint estimate. Finally, we
-demonstrate that the breakpointError is closely related to the
-annotation error, thus giving a theoretical foundation to the very
+precisely compute the accuracy of a breakpoint estimate. Also in this
+paper we demonstrate that the breakpointError is closely related to
+the annotation error, thus giving a theoretical foundation to the very
 practical new methods based on visually-determined annotated region
 databases.
 
@@ -171,7 +171,7 @@ elements of those vectors ($x_i, y_i^k$) and scalars ($p, \hat
 
 \subsection{Definition of breakpoints}
 
-Assume there are $P$ distinct positions in the series at
+Assume there are $P$ distinct positions in a series at
 which data could be gathered. Let $\mathcal P= \{1,\dots,P\}$ be the
 set of all such positions. For every position $p\in\mathcal P$, we
 assume there is some true probability distribution $D_p$. Let $\mathbb
@@ -293,12 +293,12 @@ One method for segmentation model selection is to compare the true
 distribution with the estimated distributions
 (Figure~\ref{fig:motivation-modelOnly}), and choose the estimate whose
 distribution is closest to the true distribution. Assuming the true
-probability distribution is available, one could compare it with the
-estimates using a distance function such as the earth mover's distance
-\citep{earth-mover}, or some other distance function. However, the
-true distribution is not available in practice on real data, so in
-this paper we will not explore segmentation model selection via
-comparing distributions.
+probability distributions $D_p$ are available, one could compare them
+with the estimates using a distance function such as the earth mover's
+distance \citep{earth-mover}, or some other distance
+function. However, the true distribution is not available in practice
+on real data, so in this paper we will not explore segmentation model
+selection via comparing distributions.
 
 Instead, we propose a method for comparing the true and estimated
 breakpoints. For any $d$-vectors of data and positions $(\mathbf x,
@@ -384,13 +384,13 @@ reference set of breakpoints.
 
 This paper has been revised and expanded from Chapter~4 of the
 doctoral thesis of \citet{HOCKING-phd-ch4}, which has not been
-previously published elsewhere. Differences include minor differences
+previously published elsewhere. Differences include minor changes
 in notation, an expanded introduction, and more complete references.
 
-The main subject of Section~\ref{sec:definition} of this paper is the
-breakpointError, which is a function for precisely measuring the
-breakpoint detection accuracy of a segmentation model. There are
-several other approaches for evaluating segmentation
+The main subject of this paper is the breakpointError (defined in
+Section~\ref{sec:definition}), which is a function for precisely
+measuring the breakpoint detection accuracy of a segmentation
+model. There are several other approaches for evaluating segmentation
 models. \citet{zaid-lasso} compared the number of detected breakpoints
 with the number of true breakpoints, ignoring the positions of the
 breakpoints. A more precise method was proposed by
@@ -411,18 +411,17 @@ model via annotated regions is similar to the breakpointError function
 we propose in this paper, and the precise link between these methods
 will be explored in Section~\ref{sec:relaxation}.
 
-Section~\ref{sec:simulations} proposes to use the breakpointError
-function to determine the optimal form of penalty functions for
-breakpoint detection in simulated piecewise constant signals with
-Gaussian noise. Many related penalties have been proposed for the
-change-point detection problem. The standard AIC or BIC criteria are
-not well adapted in this context since the model collection is
-exponential \citep{BM04,BIC,Akaike73,BGH09}, and also because
-change-points are discrete parameters \citep{mBIC}.  Many criteria
-specifically adapted to change-point models have been proposed.  For
-example, there are many different variants of the BIC
-\citep{Yao88,Lee95,mBIC}, and the model selection theory of Birg\'e
-and Massart suggest other penalties
+Section~\ref{sec:simulations} shows one example application of the
+breakpointError function, for determining the optimal form of penalty
+functions in segmentation models for simulated data. Many related
+penalties have been proposed for the change-point detection
+problem. The standard AIC or BIC criteria are not well adapted in this
+context since the model collection is exponential
+\citep{BM04,BIC,Akaike73,BGH09}, and also because change-points are
+discrete parameters \citep{mBIC}.  Many criteria specifically adapted
+to change-point models have been proposed.  For example, there are
+many different variants of the BIC \citep{Yao88,Lee95,mBIC}, and the
+model selection theory of Birg\'e and Massart suggest other penalties
 \citep{lavielle2005,lebarbier,BM04,calibration}. The precise
 differences between these penalties and the penalties that we find
 will be discussed in Section~\ref{sec:simulations}, but the main
@@ -446,7 +445,7 @@ of the data).
 \label{sec:definition}
 
 Let us recall the notation of Section~1. Assume there are $P$ distinct
-positions in the series at which data could be gathered. Let $\mathcal
+positions in a series at which data could be gathered. Let $\mathcal
 P= \{1,\dots,P\}$ be the set of all such positions. For every position
 $p\in\mathcal P$, we assume there is some true probability
 distribution $D_p$. Let $\mathbb B=\{1,\dots,P-1\}$ be all bases after
@@ -457,12 +456,13 @@ The segmentation algorithm is given a sample of size $d \leq P$ of
 data $(p_1, y_1), \dots, (p_d, y_d)$, with positions $p_i\in\mathcal
 P$ and noisy observations $y_i\sim D_{p_i}$ for all samples $i\in\{1,
 \dots, d\}$. The job of the segmentation algorithm is to return a
-breakpoint guess $G\subseteq B$. The object of this section is to
+breakpoint guess $G\subseteq \mathbb B$. The object of this section is to
 define the breakpointError $E^B_{\text{exact}}(G)$, which quantifies
 the accuracy of the guess $G$ with respect to the true breakpoints
 $B$.
 
-\subsection{Properties of the breakpointError function}
+\subsection{Desired properties of the breakpointError function}
+\label{sec:desired-properties}
 
 We would like the breakpointError function $E^B_{\text{exact}}:
 2^{\mathbb B}\rightarrow \RR^+$ to satisfy the following properties:
@@ -575,16 +575,18 @@ signal in Figure~\ref{fig:exact_imprecision}.
   \caption{For a small signal with 2 breakpoints, and for breakpoints
     $i\in\{1, 2\}$, we plot the $\ell_i$ functions that measure the
     precision of a guess in $\mathbf r_i = [\underline r_i, \overline
-    r_i]$.  The signal $\mathbf m\in\RR^{22}$ has 2 breakpoints:
-    $B=\{4,14\}$.}
+    r_i]$.  The blue signal $\mathbf m\in\RR^{22}$ has 2 breakpoints:
+    $B=\{4,14\}$. To emphasize the discrete nature of the data, N is
+    drawn at each of the $P=22$ distinct positions at which data
+    could be gathered.}
   \label{fig:exact_imprecision}
 \end{figure}
 
 
 Intuitively, if we observe a breakpoint guess $g\in \r_i$, then its
 closest breakpoint is $B_i$. To define the best guess in each region,
-we use piecewise linear functions $C_{\underline r,b,\overline r}:\RR\rightarrow[0,1]$
-defined as follows:
+we use piecewise affine functions $C_{\underline r,b,\overline
+  r}:\RR\rightarrow[0,1]$ defined as follows:
 \begin{equation}
   \label{eq:cLxR}
   C_{\underline r,b,\overline r}(g) =
@@ -601,16 +603,16 @@ $g\in\mathbb B$ using
   \label{eq:ell_i_exact}
   \ell_i(g)=C_{\rileft,B_i,\riright}(g).
 \end{equation}
-These functions are shown in Figure~\ref{fig:exact_imprecision} for a
-small signal with 2 breakpoints.
-% We
-% will use $\ell_i$ to define the imprecision~$I_i$, one component of
-% the exact breakpoint error.
+These piecewise affine functions are shown in
+Figure~\ref{fig:exact_imprecision} for a small signal with 2
+breakpoints. Note that there is some degree of arbitrary choice in the
+definition of the $\ell_i$ functions. For example, properly defined
+piecewise quadratic functions could also satisfy the
+\textbf{precision} property desired of the breakpointError
+(Section~\ref{sec:desired-properties}).
 
 Now, we are ready to define the exact breakpointError of a set of
 guesses $G\subseteq\mathbb B$.
-%We will use $i$ for the index of the
-%breakpoints $B_i$ and $j$ for the index of the guesses $G_j$. 
 First, let $G \cap\r$ be the subset of guesses $G$ that fall in
 region~$\r$. 
 
@@ -654,12 +656,14 @@ breakpoints $B$ as
  + \sum_{i=1}^{|B|}\text{FP}(G,\r_i)+\text{FN}(G,\r_i)+I(G,\r_i,\ell_i).
 \end{equation}
 
-To compute the exact breakpointError, we first sort lists of $n=|B|$
+\subsection{Implementation}
+
+To compute the exact breakpointError, we first sort lists of $\rho=|B|$
 and $m=|G|$ items. Using the quicksort algorithm, this requires
-$O(n\log n + m\log m)$ operations in the average case
+$O(\rho\log \rho + m\log m)$ operations in the average case
 \citep{clrs}. Once sorted, the components of the cost can be computed
-in linear time $O(n + m)$. So, overall the computation of the error
-can be accomplished in best case $O(n + m)$, average case $O(n\log n +
+in linear time $O(\rho + m)$. So, overall the computation of the error
+can be accomplished in best case $O(\rho + m)$, average case $O(\rho\log \rho +
 m\log m)$ operations. Its computation is implemented in efficient C
 code in the \verb|breakpointError| R package on R-Forge, which can be
 installed in R using
@@ -837,10 +841,11 @@ training on one and testing on another:
 \end{equation}
 
 In Figure~\ref{fig:variable-density-error-alpha}, we plot $E^*$ and
-TestErr for a grid of $\alpha$ values.
-It is clear that the optimal penalty is given by $\alpha=1/2$. This
-corresponds to the following model selection criterion which is
-invariant to sampling density:
+TestErr for a grid of $\alpha$ values.  It is clear that the optimal
+penalty is given by $\alpha=1/2$. This corresponds to the following
+model selection criterion which is invariant to the number of data
+points sampled $d_i$ (for different simulated signals $i$ with the
+same true breakpoints):
 \begin{equation}
   \label{eq:var_dens_opt_pen}
   k_i(\lambda) = 
@@ -904,134 +909,6 @@ by Lebarbier.}
   \label{tab:AIC-BIC}
 \end{table}
 
-\newpage
-
-\subsection{Scale normalization}
-\label{variable_scale}
-In real array CGH data, the signal variance is not the same across
-samples. In fact, using the variance estimate proposed below in
-(\ref{eq:med_abs_diff}), over all the profiles in the
-neuroblastoma data set, we see a range of values between 0.029 and
-0.371.
-
-So we analyze the following simulation to construct a penalty that is
-invariant to the scale of the data. First, we define a theoretical
-signal $\mathbf m\in\RR^{700}$ with breakpoints every 100 bases, shown as
-the blue line for 2 signals in
-Figure~\ref{fig:variable-scale-signals}.
-
-Then, we generate a signal $\mathbf y_i\in\RR^{d_i}$ by adding standard normal
-noise to the signal, and multiplying by a scale factor
-$\sigma\in\{1,10,100,1000\}$. The goal is to define a penalty
-invariant to this scaling.
-For each signal $i$, we estimate its
-variance using the robust estimator
-\begin{equation}
-  \label{eq:med_abs_diff}
-  \hat s_i = \text{Median}_{j=1}^{d_i-1}
-\left(|y_{ij}-y_{i,j+1}|\right),
-\end{equation}
-and then define the optimal number of segments as
-\begin{equation}
-  \label{eq:kstar_shat}
-  k_i^\alpha(\lambda) = \argmin_k \lambda k \hat s_i^\alpha 
-+ ||\mathbf y_i - \mathbf{\hat y}_i^k||^2_2,
-\end{equation}
-where $\mathbf{\hat y}_i^k$ is the least squares segmentation with $k$
-segments.
-
-\fig{variable-scale-signals}{Simulated noisy signal (black) and true piecewise constant 
-  signal (blue) for 2 different scales.}
-
-\newpage
-Using the type of analysis in the previous section, we saw that
-minimum breakpoint detection error is achieved when we choose a
-penalty exponent $\alpha$ that results in aligned annotation error
-curves $E_i^\alpha$. For two signals $i\neq j$, this implies the
-condition
-\begin{eqnarray}
-  \label{eq:equal_err}
-%  E_i^\alpha(\lambda)&=&E_j^\alpha(\lambda)\\
-  \text{BErr}_i[k^\alpha_i(\lambda)]&=&  
-  \text{BErr}_j[k^\alpha_j(\lambda)].
-\end{eqnarray}
-Since the assumption of our simulation model is that signals $i$ and
-$j$ are identical up to a scaling, the breakpoints are the same and so
-$\text{BErr}_i=\text{BErr}_j$. Thus we simply need to find the 
-exponent $\alpha$ such that $k^\alpha_i(\lambda)=k^\alpha_j(\lambda)$.
-
-It is easy to see why $\alpha=2$ is the optimal exponent. First, let
-$\sigma>0$ be a scaling factor and let $\mathbf y_1, \mathbf y_2$ be
-two scaled signals: $\mathbf
-y_2=\sigma \mathbf y_1$. This implies two interesting properties:
-\begin{itemize}
-\item \textbf{(a)} estimated models are scaled: $\mathbf{\hat y}_2^k = \mathbf{\hat y}_1^k\sigma$ for all model sizes $k$.
-\item \textbf{(b)} variance estimates are scaled:
-  $\hat s_2 = \hat s_1 \sigma$.
-\end{itemize}
-From the defintion of $k^\alpha_i$ in (\ref{eq:kstar_shat}) it
-is clear that
-\begin{eqnarray*}
-  \label{eq:k2=k1}
-  k^0_2(\lambda) 
-  &=& \argmin_k \lambda k + ||\mathbf y_2 - \mathbf{\hat y}_2^k||_2^2\\
-  &=&\argmin_k \lambda k + ||\sigma \mathbf y_1 - \sigma \mathbf{\hat y}_1^k||_2^2 
-  \ \ \ \textbf{ (a)}\\
-  &=&\argmin_k \lambda k + \sigma^2||\mathbf y_1 - \mathbf{\hat y}_1^k||_2^2\\
-  &=&\argmin_k \lambda\sigma^{-2} k+\sigma^2||\mathbf y_1 - \mathbf{\hat y}_1^k||_2^2\\
-  &=& k^0_1(\lambda \sigma^{-2}).
-\end{eqnarray*}
-We use this fact to rewrite the equality of the model selection curves
-as follows:
-\begin{eqnarray*}
-  k_1^\alpha(\lambda) &=& k_2^\alpha(\lambda) \\
-k_1^0(\lambda \hat s_1^\alpha) &=& k_2^0(\lambda \hat s_2^\alpha)\\
-&=& k^0_1(\lambda\hat s_2^\alpha\sigma^{-2})\\
-&=&k_1^0\big(\lambda(\hat s_1\sigma^\alpha)\sigma^{-2}\big)\ \ \ \textbf{(b)}\\
-&=&k_1^0(\lambda\hat s_1^\alpha \sigma^{\alpha-2}).
-\end{eqnarray*}
-This implies that $\alpha=2$ must be chosen in order for the model
-selection curves to align $k_1^\alpha(\lambda)=k_2^\alpha(\lambda)$.
-
-
-\newpage
-
-We now proceed with the same kind of empirical analysis that we used
-to establish an optimal penalty for sampling density. In
-Figure~\ref{fig:variable-scale-berr}, we plot the penalized model
-breakpoint detection error $E_i^\alpha$ and the optimal $\hat
-\lambda_i^\alpha$ for two signals $i$ and several $\alpha$ values.
-This plot suggests that a value of $\alpha=2$ defines a penalty that
-will allow generalization of $\hat \lambda^\alpha_i$ values between
-signals $i$.
-
-\fig{variable-scale-berr}{Model breakpoint detection error functions
-  $E_i^\alpha$ (lines) and optimal $\hat \lambda_i^\alpha$ (points)
-  for several penalty exponents $\alpha$ and 2 signals $i$ of
-  different scale. The penalty contains a term for the variance
-  estimate $\hat s_i^\alpha$.}
-
-\newpage
-
-In Figure~\ref{fig:variable-scale-error-alpha}, we plot the train
-error $E^*$ and TestErr as functions of $\alpha$.  In agreement with
-our earlier analysis, these simulations clearly indicate that
-$\alpha=2$ is optimal. Thus, we conclude that the following model
-selection criterion is invariant to scaling:
-\begin{equation}
-  \label{eq:kstar_shat_opt}
-  k_i(\lambda) = \argmin_k \lambda k \hat s_i^2 + ||y_i-\hat y_i^k||^2_2.
-\end{equation}
-This result agrees with the theoretical results of \citet{lebarbier},
-who considered constructing an optimal penalty for breakpoint
-detection with respect to the square loss.
-
-
-\fig{variable-scale-error-alpha}{Train and test error curves as a
-  function of penalty exponent $\alpha$, for signals of variable
-  scale. The penalty contains a term for the variance estimate $\hat
-  s_i^\alpha$.}
-
 
 
 \newpage
@@ -1048,8 +925,8 @@ signal length.
 So we consider the following simulation where we fix the number of
 points sampled at $d=2000$ and vary the length of the signal
 sampled. In Figure~\ref{fig:variable-breaks-constant-size}, we show
-samples of 2 different lengths $l_i$, for the same true piecewise constant signal
-$\mathbf m$.
+samples of 2 different lengths $l_i$, for the same true piecewise
+constant signal $\mathbf m$.
 
 \figpdf{variable-breaks-constant-size}{Samples of 2 different lengths
   $l_i$ but constant number of points $d=2000$.}
@@ -1059,29 +936,29 @@ $\mathbf m$.
 For each signal $i$, we define the penalty
 \begin{equation}
   \label{eq:kstar_length}
-  k_i^\alpha(\lambda) = \argmin_k \lambda k l_i^\alpha 
+  k_i^\beta(\lambda) = \argmin_k \lambda k l_i^\beta
 + ||\mathbf y_i - \mathbf{\hat y}_i^k||^2_2,
 \end{equation}
 where $l_i$ is the length of the signal in base pairs. The goal will
-be to find an $\alpha$ that can be used for signals of varying length.
+be to find a $\beta$ that can be used for signals of varying length.
 
 
 In Figure~\ref{fig:variable-breaks-constant-size-berr}, we show
 the breakpoint detection error curves for two signals and several
-penalty exponents $\alpha$.
-These curves seem to align when $\alpha=-1/2$.
+penalty exponents $\beta$.
+These curves seem to align when $\beta=-1/2$.
 
 \fig{variable-breaks-constant-size-berr}{Breakpoint detection error
-  curves for several penalty exponents $\alpha$ and 2 samples of
+  curves for several penalty exponents $\beta$ and 2 samples of
   varying length in base pairs $l_i$. The penalty contains a term
-  $l_i^\alpha$.}
+  $l_i^\beta$.}
 
 \newpage
 
 In Figure~\ref{fig:variable-breaks-constant-size-alpha}, we plot the
 train and test error curves over the entire set of simulated signals.
 These curves indicate minimal breakpoint detection error at
-$\alpha=-1/2$, corresponding to the following penalty:
+$\beta=-1/2$, corresponding to the following penalty:
 \begin{equation}
   \label{eq:kstar_length_opt}
   k_i(\lambda) = \argmin_k \frac{\lambda k}{\sqrt{l_i}}
@@ -1094,7 +971,7 @@ $\alpha=-1/2$, corresponding to the following penalty:
 \fig{variable-breaks-constant-size-alpha}{Train and test error curves
   for signals of different length in base pairs $l_i$. The penalty
   contains a term
-  $l_i^\alpha$.}
+  $l_i^\beta$.}
 
 
 Interestingly, the $1/\sqrt{l_i}$ term that we obtain here is in good
@@ -1134,14 +1011,15 @@ complexity tradeoff parameters $\lambda$ between these signals.
 For each signal $i$, we define the penalty
 \begin{equation}
   \label{eq:kstar_composite}
-  k_i^\alpha(\lambda) = \argmin_k \lambda k l_i^\alpha \sqrt{d_i}
+  k_i^{\alpha,\beta}(\lambda) = \argmin_k \lambda k {d_i}^\alpha l_i^\beta
   + ||\mathbf y_i - \mathbf{\hat y}_i^k||^2_2,
 \end{equation}
 where $l_i$ is the signal length in base pairs and $d_i$ is the number
-of points sampled. We will attempt to determine an $\alpha$ that
-allows accurate breakpoint detection in signals of varying length and
-number of points sampled. Based on the result in
-Section~\ref{variable_size}, we expect to find $\alpha=-1/2$.
+of points sampled. We will attempt to determine a pair of $\alpha$ and
+$\beta$ values that allow accurate breakpoint detection in signals of
+varying length and number of points sampled. Based on the results in
+Sections~\ref{variable_density} and \ref{variable_size}, we expect to
+find $\alpha=1/2$ and $\beta=-1/2$.
 
 \begin{figure}[H]
   \centering
@@ -1153,23 +1031,50 @@ Section~\ref{variable_size}, we expect to find $\alpha=-1/2$.
 
 \newpage
 
-In Figure~\ref{fig:variable-size-berr}, we plot the breakpoint error
-functions $E_i^\alpha$ for 2 signals $i$ and several exponents
-$\alpha$. The curves seem to align when $\alpha=-1/2$.
+In Figure~\ref{fig:variable-size-error-alpha-beta}, we plot the train
+and test breakpoint error functions as a function of both $\alpha$ and
+$\beta$. It is clear that the minimum is achieved by penalties with
+$\alpha = -\beta$. One such penalty is indeed $\alpha=1/2,
+\beta=-1/2$, as indicated from the analysis of the previous
+sections.
 
-\fig{variable-size-berr}{Breakpoint error functions $E_i^\alpha$ for
-  several exponents $\alpha$ and 2 signals $i$ of varying number of
-  points $d_i$ and length in base pairs $l_i$. The penalty contains a
-  term $l_i^\alpha\sqrt{d_i}$.}
+Note that in the simulated signals $i$ in this section, we have $l_i =
+d_i$. Thus the penalty with $\alpha=0,\beta=0$ performs just as well
+as the penalty with $\alpha=1/2,\beta=-1/2$, since they are in fact
+the same penalty:
 
-In Figure~\ref{fig:variable-size-error-alpha}, we plot the train and
-test error as a function of penalty exponent $\alpha$. This analysis
-suggests that the optimal exponent is $\alpha=-1/2$, as expected from
-our previous analysis in Section~\ref{variable_size}.
+\begin{equation}
+  \label{eq:kstar_composite_same}
+  k_i^{0,0}(\lambda) = 
+\argmin_k \lambda k + ||\mathbf y_i - \mathbf{\hat y}_i^k||^2_2
+\end{equation}
 
-\fig{variable-size-error-alpha}{Train and test error functions for
-  several signals of varying number of points $d_i$ and length in base
-  pairs $l_i$. The penalty contains a term $l_i^\alpha \sqrt{d_i}$.}
+\figpdf{variable-size-error-alpha-beta}{Train and test error functions
+  for several signals of varying number of points $d_i$ and length in
+  base pairs $l_i$. Mean error values normalized to $[0,1]$ in order
+  to clearly visualize the minimum values at $\alpha = -\beta$ for
+  both the train and test error. The penalty contains a term
+  $d_i^\alpha l_i^\beta$.}
+
+% \newpage
+
+% In Figure~\ref{fig:variable-size-berr}, we plot the breakpoint error
+% functions $E_i^\alpha$ for 2 signals $i$ and several exponents
+% $\alpha$. The curves seem to align when $\alpha=-1/2$.
+
+% \fig{variable-size-berr}{Breakpoint error functions $E_i^\alpha$ for
+%   several exponents $\alpha$ and 2 signals $i$ of varying number of
+%   points $d_i$ and length in base pairs $l_i$. The penalty contains a
+%   term $l_i^\alpha\sqrt{d_i}$.}
+
+% In Figure~\ref{fig:variable-size-error-alpha}, we plot the train and
+% test error as a function of penalty exponent $\alpha$. This analysis
+% suggests that the optimal exponent is $\alpha=-1/2$, as expected from
+% our previous analysis in Section~\ref{variable_size}.
+
+% \fig{variable-size-error-alpha}{Train and test error functions for
+%   several signals of varying number of points $d_i$ and length in base
+%   pairs $l_i$. The penalty contains a term $l_i^\alpha \sqrt{d_i}$.}
 
 \newpage
 \subsection{Optimal penalties for the fused lasso signal approximator}
@@ -1598,7 +1503,7 @@ To define the complete annotation error, we perform two relaxations:
 \item Instead of using (\ref{eq:R_i}) and (\ref{eq:L_i}) to determine
   a breakpoint region $\r_i$, we use the region $\hat\r_i$ determined
   by visual inspection. %Furthermore, let $\hat R=\{\hat r_1, \dots,  \hat r_6\}$ be the set of regions that each contain 1 breakpoint.
-\item Rather than the piecewise linear imprecision $\ell_i$, we use
+\item Rather than the piecewise affine imprecision $\ell_i$, we use
   the zero-one imprecision $\hat \ell_i$:
 \begin{equation}
   \label{eq:hat_ell_i}

@@ -1,4 +1,4 @@
-HOCKING-breakpointError.pdf: HOCKING-breakpointError.tex refs.bib figures/variable-density-signals.png figures/variable-density-error-alpha.tex figures/variable-density-berr.tex figures/variable-density-error-train.tex figures/variable-scale-signals.tex figures/variable-scale-berr.tex figures/variable-scale-error-alpha.tex figures/breakpoint-error-pieces.tex figures/variable-size-signals.png figures/variable-size-berr.tex figures/variable-size-error-alpha.tex figures/variable-breaks-constant-size.pdf figures/variable-breaks-constant-size-berr.tex figures/variable-breaks-constant-size-alpha.tex figures/variable-density-error-alpha-flsa.tex figures/variable-density-berr-flsa.tex figures/variable-density-sigerr.tex tables/penalty-real-data.tex figure-motivation.pdf
+HOCKING-breakpointError.pdf: HOCKING-breakpointError.tex refs.bib figures/variable-density-signals.png figures/variable-density-error-alpha.tex figures/variable-density-berr.tex figures/variable-density-error-train.tex figures/variable-scale-signals.tex figures/variable-scale-berr.tex figures/variable-scale-error-alpha.tex figures/breakpoint-error-pieces.tex figures/variable-size-signals.png figures/variable-size-berr.tex figures/variable-size-error-alpha.tex figures/variable-breaks-constant-size.pdf figures/variable-breaks-constant-size-berr.tex figures/variable-breaks-constant-size-alpha.tex figures/variable-density-error-alpha-flsa.tex figures/variable-density-berr-flsa.tex figures/variable-density-sigerr.tex tables/penalty-real-data.tex figure-motivation.pdf figures/variable-size-error-alpha-beta.tex
 	rm -f *.aux *.bbl
 	pdflatex -interaction errorstopmode HOCKING-breakpointError
 	bibtex HOCKING-breakpointError
@@ -324,4 +324,8 @@ data/annotation.sets.RData: data/annotation.sets.R data/annotations.csv
 	R --no-save < $<
 data/cost.matrices.RData: data/cost.matrices.R data/segmentation.list.RData data/annotation.sets.RData
 	R --no-save < $<
-
+## for reviews 7 April 2015
+data/variable.size.alpha.beta.RData: data/variable.size.alpha.beta.R data/variable.size.signals.RData
+	R --no-save < $<
+figures/variable-size-error-alpha-beta.tex: figures/variable-size-error-alpha-beta.R data/variable.size.alpha.beta.RData
+	R --no-save < $<

@@ -23,21 +23,23 @@ sample.signal <- function(until){
   result$cost <- sapply(result$breaks,function(x){
     bkpt.err(result$mu.breaks,x,d)
   })
-  result$crit <- function(lambda,alpha){
+  result$crit <- function(lambda,alpha,beta=0.5){
     J <- result$J.est
     Kseq <- seq_along(J)
-    lambda * Kseq * result$size^alpha * sqrt(length(result$mu)) + J
+    lambda * Kseq * (length(result$mu)/result$size)^alpha + J #constant
+    lambda * Kseq * length(result$mu)^alpha + J
+    lambda * Kseq * result$size^alpha * length(result$mu)^beta + J 
   }
   result$lambda <- 10^seq(-6,10,l=200)
-  result$kstar <- function(lambda,a){
-    which.min(result$crit(lambda,a))
+  result$kstar <- function(lambda,a,b=0.5){
+    which.min(result$crit(lambda,a,b))
   }
-  result$lambda.error <- function(a){
-    k <- sapply(result$lambda,result$kstar,a)
+  result$lambda.error <- function(a,b=0.5){
+    k <- sapply(result$lambda,result$kstar,a,b)
     result$cost[k]
   }
-  result$lambda.star <- function(a){
-    error <- result$lambda.error(a) 
+  result$lambda.star <- function(a,b=0.5){
+    error <- result$lambda.error(a,b)
     l <- which(error == min(error))
     chosen <- l[ceiling(length(l)/2)]
     result$lambda[chosen]

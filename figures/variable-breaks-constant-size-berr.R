@@ -12,7 +12,7 @@ lerr.df <- do.call(rbind,lapply(show,function(sig){
 }))
 library(ggplot2)
 labeller <- function(var,val){
-  var <- ifelse(var=="alpha","\\alpha","\\textrm{length}")
+  var <- ifelse(var=="alpha","\\beta","\\textrm{length}")
   sprintf("$%s = %s$",var,val)
 }
 p <- ggplot(lerr.df,aes(log10(lambda),error))+
@@ -20,7 +20,7 @@ p <- ggplot(lerr.df,aes(log10(lambda),error))+
   geom_point(fill="white",pch=21,data=subset(lerr.df,optimal))+
   facet_grid(length~alpha,scales="free",labeller=labeller)+
   xlab("model complexity tradeoff parameter $\\log_{10}(\\lambda)$")+
-  scale_y_continuous("error $E_i^\\alpha(\\lambda)$",
+  scale_y_continuous("error $E_i^\\beta(\\lambda)$",
                      breaks=c(0,1,2,40,60,80))
 print(p)
 

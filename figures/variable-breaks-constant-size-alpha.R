@@ -47,7 +47,7 @@ p <- ggplot(stat.df,aes(alpha,mean))+
   ##coord_cartesian(ylim=c(0,10))+
   facet_grid(what~.,scales="free")+
   ylab("total error relative to true breakpoints (breakpointError)")+
-  xlab("penalty exponent $\\alpha$")
+  xlab("penalty exponent $\\beta$")
 
 ##pdf("figures/variable-breaks-constant-size-alpha.pdf",h=4)
 library(tikzDevice);options(tikzDocumentDeclaration="\\documentclass[11pt]{memoir}",tikzMetricsDictionary="tikzMetrics")

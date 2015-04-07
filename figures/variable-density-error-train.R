@@ -30,7 +30,7 @@ p <- ggplot(,aes(log10(lambda),error))+
   facet_grid(.~alpha,
              labeller=function(var,val)sprintf("$\\alpha = %s$",val))+
   xlab("model complexity tradeoff parameter $\\log_{10}(\\lambda)$")+
-  ylab("error $E_i^\\alpha(\\lambda)$")
+  ylab("error $E^\\alpha(\\lambda)$")
 ##pdf("figures/variable-density-error-train.pdf",h=2)
 library(tikzDevice);options(tikzDocumentDeclaration="\\documentclass[11pt]{memoir}",tikzMetricsDictionary="tikzMetrics")
 tikz("figures/variable-density-error-train.tex",h=2,w=6)
