@@ -11,6 +11,7 @@
 \usepackage{amsmath,amsthm,amsfonts,amssymb}
 \newtheorem{definition}{Definition}
 \newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
 \usepackage{dtklogos}
 \usepackage{url}
 \usepackage{natbib}
@@ -922,11 +923,16 @@ proportional to the length of the chromosome in base pairs, and we would
 like to design a model selection criterion that is invariant to the
 signal length.
 
-So we consider the following simulation where we fix the number of
-points sampled at $d=2000$ and vary the length of the signal
-sampled. In Figure~\ref{fig:variable-breaks-constant-size}, we show
-samples of 2 different lengths $l_i$, for the same true piecewise
-constant signal $\mathbf m$.
+So as a first step toward constructing a penalty that is invariant to
+the number of breakpoints, we consider the following simulation where
+we fix the number of points sampled at $d_i=2000$, and vary the length
+of the signal sampled. In
+Figure~\ref{fig:variable-breaks-constant-size}, we show samples of 2
+different lengths $l_i$, for the same true piecewise constant signal
+$\mathbf m$. This simulation is somewhat unrealistic since the number
+of data points $d_i$ in real data sets is usually proportional to the
+signal length $l_i$. We will consider a more realistic simulation
+model and a more complicated penalty in the next section.
 
 \figpdf{variable-breaks-constant-size}{Samples of 2 different lengths
   $l_i$ but constant number of points $d=2000$.}
@@ -1172,17 +1178,25 @@ To evaluate which penalty parameter $\alpha$ results in optimal
 fitting and learning, we use $E^*$ and TestErr as defined in
 (\ref{eq:lerr_train}) and (\ref{eq:lerr_test}). These functions are
 plotted in Figure~\ref{fig:variable-density-error-alpha-flsa}, and
-suggest that a value of $\alpha=1$ is optimal.  This analysis suggests
+suggest that a value of $\alpha=1$ is optimal. This analysis suggests
 that taking $\lambda_2=\lambda d_i$ is optimal for breakpoint
 detection using FLSA. This agrees with the observation of
 \citet{HOCKING-breakpoints} that the flsa.norm penalty with a $d_i$
 term works better than the un-normalized flsa penalty.
 
+However, we obtained a different penalty ($\alpha=0.5$) in
+Section~\ref{variable_density} for another model, maximum likelihood
+segmentation. These differences in optimal $\alpha$ values are due to
+the differences in how model complexity is measured in the two
+models. Maximum likelihood segmentation measures model complexity
+using the $\ell_0$-norm of the difference vector of $\mathbf m$,
+whereas the FLSA uses the $\ell_1$-norm.
+
 We conclude by noting that this procedure could also be applied to
-find penalties for FLSA that depend on estimated signal noise~$\hat
-s_i^2$ and length in base pairs~$l_i$. However, we did not pursue this
-since FLSA does not work as well as maximum likelihood segmentation in
-practice on real data \citep{HOCKING-breakpoints}.
+find penalties for FLSA that depend on other signal properties such as
+length in base pairs~$l_i$. However, we did not pursue this since FLSA
+does not work as well as maximum likelihood segmentation in practice
+on real data \citep{HOCKING-breakpoints}.
 
 \fig{variable-density-error-alpha-flsa}{Train and test error as a
   function of penalty exponent $\alpha$. The penalty has a term for
@@ -1195,10 +1209,12 @@ practice on real data \citep{HOCKING-breakpoints}.
 
 In Sections~\ref{variable_density}-\ref{variable_size}, we found
 optimal maximum likelihood segmentation penalties for data with
-varying sampling density, scale, and length. In
-Section~\ref{combining_penalties}, we also demonstrated that these
-results can be combined. This analysis suggests the following penalty,
-for every signal $i$:
+varying sampling density and length. We also used theoretical
+arguments and simulation studies and found that the optimal penalty
+should include a term for the estimated variance $\hat s_i^2$
+\citep{HOCKING-phd-ch4}. In Section~\ref{combining_penalties}, we also
+demonstrated that these results can be combined. This analysis
+suggests the following penalty, for every signal $i$:
 \begin{equation}
   \label{eq:composite_penalty}
   k_i(\lambda) = 
@@ -1259,16 +1275,16 @@ annotation error function.
     \hline
     \ref{sec:breakpoint_error}& breakpointError & $E^B_{\text{exact}}$ & 
     true breaks $B$ & guesses \\
-    \ref{sec:complete} & complete annotation error & $E_{\text{complete}}^A$ & 
-    all breakpoint annotations $A$ & guesses\\
     \ref{sec:incomplete} & incomplete annotation error & $E_{\text{incomplete}}^A$ &
     some annotations $A$ & guesses\\
+    \ref{sec:complete} & complete annotation error & $E_{\text{complete}}^A$ & 
+    all breakpoint annotations $A$ & guesses\\
     \ref{sec:zero-one}& 
     01 annotation error & $E_{01}^A$ & some annotations $A$ & regions
   \end{tabular}
   \end{center}
   \caption{Several breakpoint detection error functions, 
-    ordered by how much prior knowledge is needed for computation. 
+    and how much prior knowledge is needed to compute each. 
     The breakpointError needs the most prior knowledge and can only be 
     used in simulations when the true breakpoints $B$ are known. 
     In contrast, the incomplete/01 annotation error can be used in
@@ -1303,20 +1319,31 @@ Figure~\ref{fig:variable-density-annotation-cost}.
 \label{fig:variable-density-annotation-cost}
 \end{figure}
 
-\newpage
 
-In general, let $A=\{(a_1, \r_1), \dots, (a_n, \r_n)\}$ 
-be a set of $n$ annotations. For
-every annotation~$i$, let $\r_i\subset\mathbb I\mathbb B$ be the
-interval that defines the region, and let $a_i\subseteq\{0,1,\dots\}$
-be the interval of allowable breakpoint counts in this region. For
+%\newpage
+
+Recall that there are $P$ distinct positions in a series at which data
+could be gathered, 
+%that $\mathcal P= \{1,\dots,P\}$ is the set of all such positions, 
+and that $\mathbb B=\{1,\dots,P-1\}$ is the set of all
+positions after which a breakpoint is possible.
+
+\begin{definition}
+  A set of $n$ \textbf{annotations} can be written as $A=\{(a_1,
+  \r_1), \dots, (a_n, \r_n)\}$. For each annotation~$i$,
+  $\r_i\subset\mathbb I\mathbb B$ is an interval that defines the
+  region, and $a_i\subseteq\{0,1,\dots\}$ is an interval of allowable
+  breakpoint counts in this region.
+\end{definition}
+
+For
 example, consider the annotated regions in
 Table~\ref{tab:sample_annotations}.
 
 \begin{table}[H]
   \begin{center}
     \begin{tabular}{ccc}
-  $i$ & Allowed breakpoints $a_i$ & Region $\hat \r_i$\\
+  $i$ & Allowed breakpoints $a_i$ & Region $\r_i$\\
 \hline
 1 & \{0\} & [5,10]\\
 2 & \{1\} & [20,30]\\
@@ -1333,10 +1360,8 @@ Table~\ref{tab:sample_annotations}.
   \label{tab:sample_annotations}
 \end{table}
 
-
-
-
-Then, we define the annotation-dependent false positive rate as
+Given a set of breakpoint guesses $G\subseteq \mathbb B$, we define
+the annotation-dependent false positive count as
 \begin{equation}
   \label{eq:FP_hat}
   \hat{ \text{FP}}(G,\r,a) =
@@ -1352,7 +1377,7 @@ x_+ =
     0 & \text{ otherwise.}
   \end{cases}
 \end{equation}
-Similarly, the annotation-dependent false negative rate is defined as
+Similarly, the annotation-dependent false negative count is defined as
 \begin{equation}
   \label{eq:FN_hat}
   \hat{ \text{FN}}(G,\r,a) =
@@ -1361,15 +1386,18 @@ Similarly, the annotation-dependent false negative rate is defined as
 \big)_+.
 \end{equation}
 
-So then we define the incomplete annotation error for any set of
-annotations $A$ as
-\begin{equation}
-  \label{eq:incomplete}
+\begin{definition}
+  Let $A$ be a set of annotations and $G\subseteq \mathbb B$
+  a set of breakpoint guesses. The incomplete annotation error is the
+  count of annotation-dependent false positives and false negatives:
+\begin{equation*}
   E^A_{\text{incomplete}}(G)=
     \sum_{i=1}^n 
     \hat{\text{FP}}(G, \r_i, a_i) + 
     \hat{\text{FN}}(G, \r_i, a_i).
-\end{equation}
+\end{equation*}
+\end{definition}
+
 
 
 In the case of analyzing the simulated signals in the top panels of
@@ -1472,6 +1500,7 @@ and there are several interesting observations to note.
 \newpage
 
 \subsection{Link with breakpointError using complete annotation error}
+
 \label{sec:complete}
 It is clear from Figure~\ref{fig:variable-density-sigerr-small} that
 the annotation error is a good approximation of the exact breakpoint
@@ -1487,6 +1516,9 @@ annotation error. There are two steps:
   annotations.
 \end{enumerate}
 
+\begin{proposition}
+  TODO
+\end{proposition}
 
 %\subsection{The complete annotation error}
 

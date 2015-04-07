@@ -61,6 +61,10 @@ library(grid)
 p <- ggplot()+
   geom_tallrect(aes(xmin=min,xmax=max,fill=annotation),
                 data=regions.df)+
+  geom_tallrect(aes(xmin=min,xmax=max),
+                color="grey",
+                fill=NA,
+                data=regions.df)+
   geom_point(aes(locations,signal),pch=21,data=points.df)+
   geom_line(aes(locations,mu),lwd=2,
             colour=signal.colors["latent"],data=points.df)+
