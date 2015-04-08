@@ -356,9 +356,9 @@ breakpoints.
 
 This paper proposes the breakpointError function
 (Figure~\ref{fig:motivation-breakpointError}), which can be used to
-quantify these intuitive observations. It can be computed to quantify
-how well a set of estimated breakpoint postions matches a true or
-reference set of breakpoints.
+quantify these intuitive observations. The breakpointError can be
+computed to quantify how well a set of estimated breakpoint positions
+matches a true or reference set of breakpoints.
 
 
 \begin{figure}[H]
@@ -446,12 +446,14 @@ of the data).
 \label{sec:definition}
 
 Let us recall the notation of Section~1. Assume there are $P$ distinct
-positions in a series at which data could be gathered. Let $\mathcal
-P= \{1,\dots,P\}$ be the set of all such positions. For every position
-$p\in\mathcal P$, we assume there is some true probability
-distribution $D_p$. Let $\mathbb B=\{1,\dots,P-1\}$ be all bases after
-which a breakpoint is possible, and let $B = \{p\in \mathbb B : D_p
-\neq D_{p+1}\}$ be the set of true breakpoints.
+positions in a series at which data could be gathered. These positions
+could be indices in a data vector, genomic positions, or time
+points. Let $\mathcal P= \{1,\dots,P\}$ be the set of all such
+positions. For every position $p\in\mathcal P$, we assume there is
+some true probability distribution $D_p$. Let $\mathbb
+B=\{1,\dots,P-1\}$ be all bases after which a breakpoint is possible,
+and let $B = \{p\in \mathbb B : D_p \neq D_{p+1}\}$ be the set of true
+breakpoints.
 
 The segmentation algorithm is given a sample of size $d \leq P$ of
 data $(p_1, y_1), \dots, (p_d, y_d)$, with positions $p_i\in\mathcal
@@ -651,7 +653,7 @@ guesses $G$ outside of the breakpoint regions $R_B$.
 
 \begin{definition}
   \label{def:exact_breakpoint_cost}
-  The exact \textbf{breakpointError} of set of breakpoint guesses $G$ with
+  The \textbf{breakpointError} of set of breakpoint guesses $G$ with
   respect to the true breakpoints $B$ is the sum of the False
   Positive, False Negative, and Imprecision functions:
 
@@ -664,12 +666,12 @@ guesses $G$ outside of the breakpoint regions $R_B$.
 
 \subsection{Implementation}
 
-To compute the exact breakpointError, we first sort lists of $\rho=|B|$
+To compute the exact breakpointError, we first sort lists of $n=|B|$
 and $m=|G|$ items. Using the quicksort algorithm, this requires
-$O(\rho\log \rho + m\log m)$ operations in the average case
+$O(n\log n + m\log m)$ operations in the average case
 \citep{clrs}. Once sorted, the components of the cost can be computed
-in linear time $O(\rho + m)$. So, overall the computation of the error
-can be accomplished in best case $O(\rho + m)$, average case $O(\rho\log \rho +
+in linear time $O(n + m)$. So, overall the computation of the error
+can be accomplished in best case $O(n + m)$, average case $O(n\log n +
 m\log m)$ operations. Its computation is implemented in efficient C
 code in the \verb|breakpointError| R package on R-Forge, which can be
 installed in R using
@@ -713,7 +715,7 @@ true piecewise constant signal $\mathbf m\in\RR^P$ over $P=70000$ base
 pairs, with breakpoints every 10000 base pairs, shown as the blue line
 in Figure~\ref{fig:variable-density-signals}. Then, we define a signal
 sample size $d_i\in\{70,\dots,70000\}$ for every noisy signal
-$i\in\{1,\dots,n\}$. Let $y_i\in\RR^{d_i}$ be noisy signal $i$,
+$i\in\{1,\dots,z\}$. Let $y_i\in\RR^{d_i}$ be noisy signal $i$,
 sampled at positions $p_i\in\mathcal P^{d_i}$, with
 $p_{i1}<\cdots<p_{i,d_i}$. We sample every probe $j$ from the
 $y_{ij}\sim N(m_{p_{ij}},1)$ distribution. These samples are shown as
@@ -818,7 +820,7 @@ choose an optimal penalty exponent $\alpha$.
 First, let us consider the training error over the entire database:
 \begin{equation}
   \label{eq:lerr_train}
-  E^\alpha(\lambda) = \sum_{i=1}^n E_i^\alpha(\lambda),
+  E^\alpha(\lambda) = \sum_{i=1}^z E_i^\alpha(\lambda),
 \end{equation}
 and we define the minimal value of this function as
 \begin{equation}
@@ -1128,7 +1130,7 @@ Figure~\ref{fig:variable-density-signals-flsa}.
 
 \newpage
 
-In particular, for every signal $i\in\{1,\dots,n\}$, let
+In particular, for every signal $i\in\{1,\dots,z\}$, let
 $\mathbf y_i\in\RR^{d_i}$ be the noisy data, sampled at positions
 $\mathbf p_i\in\mathcal P^{d_i}$. To find an optimal penalty for these data,
 first let $\lambda_2 = \lambda d_i^\alpha$. For each signal $i$,
