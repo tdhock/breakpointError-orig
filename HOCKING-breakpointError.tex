@@ -72,9 +72,9 @@
 %\begin{frontmatter}
   
   \titre{A breakpoint detection error function for segmentation model
-  selection and validation}
+  selection and evaluation}
   \titrecourant{A breakpoint detection error function for segmentation model
-  selection and validation}
+  selection and evaluation}
 
   \begin{InfosAuteurs}
     \auteur{%
@@ -92,7 +92,7 @@
   \begin{abstract}
     We consider the multiple breakpoint detection problem, which is
     concerned with detecting the locations of several distinct changes
-    in a one-dimensional noisy time series. We propose the
+    in a one-dimensional noisy data series. We propose the
     breakpointError, a function that can be used to evaluate estimated
     breakpoint locations, given the known locations of true
     breakpoints. We discuss an application of the breakpointError for
@@ -143,27 +143,32 @@ technologies such as array comparative genomic hybridization
 segmentation is to detect the precise base pairs or genomic positions after
 which there are changes in copy number.
 
-A new method for supervised segmentation of copy number data was
-proposed by \citet{HOCKING-breakpoints}, who created an annotation
-database containing visually-determined regions with breakpoints or no
-breakpoints. This line of research was continued by
-\citet{HOCKING-penalties}, who proposed to use the annotated regions
-to learn a penalty function for optimal breakpoint detection. Finally,
-\citet{SegAnnDB} proposed a computer vision web site for interactive
-segmentation analysis using annotated regions. All of these supervised
-methods depend critically on the definition of the visually-determined
-annotated region database, which is used to compute an annotation
-error function. This paper continues this line of research by defining
-the breakpointError function, which uses the true breakpoints to
-precisely compute the accuracy of a breakpoint estimate. Also in this
-paper we demonstrate that the breakpointError is closely related to
-the annotation error, thus giving a theoretical foundation to the very
-practical new methods based on visually-determined annotated region
-databases.
+How to evaluate the accuracy of a segmentation model? A new method for
+supervised segmentation of copy number data was proposed by
+\citet{HOCKING-breakpoints}, who quantified the segmentation model
+accuracy using an annotation database containing visually-determined
+regions with breakpoints or no breakpoints.
+% This line of research was
+% continued by \citet{HOCKING-penalties}, who proposed to use the
+% annotated regions to learn a penalty function for optimal breakpoint
+% detection. Finally, \citet{SegAnnDB} proposed a computer vision web
+% site for interactive segmentation analysis using annotated
+% regions. 
+This method depends critically on the
+definition of the visually-determined annotated region database, which
+is used to compute an annotation error function. 
+
+This paper continues
+this line of research by defining the breakpointError function, which
+uses the true breakpoints to precisely compute the accuracy of a
+segmentation model. Also in this paper we demonstrate that the
+breakpointError is closely related to the annotation error, thus
+giving a theoretical foundation to the very practical new methods
+based on visually-determined annotated region databases.
 
 In this introduction, we first show a few motivating examples and
 figures. In Section~2 we discuss related work, and in Section~3 we
-give a definition of the breakpointError. In Section~4 we show an
+define the breakpointError. In Section~4 we show an
 application of the breakpointError, and in Section~5 we discuss its
 relationship to the annotation error. In general we use bold to denote
 vectors ($\mathbf x, \mathbf{\hat y}^k$) and plain text to denote
@@ -186,7 +191,8 @@ B=\{1,\dots,P-1\}$ be all bases after which a breakpoint is possible.
 
 For a series with $P$ positions, there is a minimum of 0 breakpoints
 ($D_1=\cdots=D_P$) and a maximum of $P-1$ breakpoints ($D_1 \neq
-\cdots \neq D_P$).
+\cdots \neq D_P$). Note that the changes in distribution may be in
+mean, variance, or any other parameters that affect the distribution.
 
 The segmentation algorithm is given a sample of size $d \leq P$ of
 data $(p_1, y_1), \dots, (p_d, y_d)$, with positions $p_i\in\mathcal
@@ -446,14 +452,14 @@ of the data).
 \label{sec:definition}
 
 Let us recall the notation of Section~1. Assume there are $P$ distinct
-positions in a series at which data could be gathered. These positions
-could be indices in a data vector, genomic positions, or time
-points. Let $\mathcal P= \{1,\dots,P\}$ be the set of all such
-positions. For every position $p\in\mathcal P$, we assume there is
-some true probability distribution $D_p$. Let $\mathbb
-B=\{1,\dots,P-1\}$ be all bases after which a breakpoint is possible,
-and let $B = \{p\in \mathbb B : D_p \neq D_{p+1}\}$ be the set of true
-breakpoints.
+positions in a series at which data could be gathered. Depending on
+the desired application, these positions could be indices in a data
+vector, genomic positions, or time points. Let $\mathcal P=
+\{1,\dots,P\}$ be the set of all such positions. For every position
+$p\in\mathcal P$, we assume there is some true probability
+distribution $D_p$. Let $\mathbb B=\{1,\dots,P-1\}$ be all bases after
+which a breakpoint is possible, and let $B = \{p\in \mathbb B : D_p
+\neq D_{p+1}\}$ be the set of true breakpoints.
 
 The segmentation algorithm is given a sample of size $d \leq P$ of
 data $(p_1, y_1), \dots, (p_d, y_d)$, with positions $p_i\in\mathcal
@@ -660,7 +666,7 @@ guesses $G$ outside of the breakpoint regions $R_B$.
 \begin{equation*}
   {E }_{\text{exact}}^B(G) =
   \big|G\setminus(\cup R_B)\big|
- + \sum_{i=1}^{|B|}\text{FP}(G,\r_i)+\text{FN}(G,\r_i)+I(G,\r_i,\ell_i).
+ + \sum_{i=1}^{|B|}\textrm{FP}(G,\r_i)+\textrm{FN}(G,\r_i)+I(G,\r_i,\ell_i).
 \end{equation*}
 \end{definition}
 
@@ -1399,8 +1405,8 @@ Similarly, the annotation-dependent false negative count is defined as
 \begin{equation*}
   E^A_{\text{incomplete}}(G)=
     \sum_{i=1}^n 
-    \hat{\text{FP}}(G, \r_i, a_i) + 
-    \hat{\text{FN}}(G, \r_i, a_i).
+    \hat{\textrm{FP}}(G, \r_i, a_i) + 
+    \hat{\textrm{FN}}(G, \r_i, a_i).
 \end{equation*}
 \end{definition}
 
@@ -1726,7 +1732,7 @@ degrades the approximation of the FP curve. Nevertheless, it is worth
 noting that minimum of the zero-one error still uniquely identifies
 the correct model with 7 segments. Even after removing many
 annotations, the minimum error still identifies the correct
-model, but not uniquely.
+model, but not uniquely. 
 
 % \begin{itemize}
 % \item \textbf{Complete}: the annotation error is a
@@ -1777,7 +1783,21 @@ model, but not uniquely.
   \label{fig:variable-density-sigerr}
 \end{figure}
 
-\newpage
+In conclusion, this section has discussed the connections between the
+breakpointError and the annotation error functions. Whereas the
+breakpointError is computable only when the true set of breakpoints is
+known, the annotation error is readily computable given a set of
+annotations, usually determined by visual inspection of the data. We
+showed that if the annotations are consistent with the true
+breakpoints, then the annotation error function is a good
+approximation of the breakpointError
+(Figure~\ref{fig:variable-density-sigerr-small}). Finally, we observed
+that even after thresholding and removing annotations, the annotation
+error function can still be used to identify a set of minimum error
+segmentation models
+(Figure~\ref{fig:variable-density-sigerr}).
+
+%\newpage
 
 \section{Conclusions and future work}
 
