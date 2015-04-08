@@ -647,15 +647,20 @@ and the imprecision of the best guess in region $r$ as
 When there are no breakpoints, we have $B=\emptyset$ and
 $R_B=\emptyset$. But we still would like to quantify the false
 positives, so let $G\setminus\big( \cup R_B\big) $ be the set of
-guesses $G$ outside of the breakpoint regions $R_B$. Finally, we
-define the exact breakpointError of guess $G$ with respect to the true
-breakpoints $B$ as
-\begin{equation}
-  \label{eq:exact_breakpoint_cost}
+guesses $G$ outside of the breakpoint regions $R_B$. 
+
+\begin{definition}
+  \label{def:exact_breakpoint_cost}
+  The exact \textbf{breakpointError} of set of breakpoint guesses $G$ with
+  respect to the true breakpoints $B$ is the sum of the False
+  Positive, False Negative, and Imprecision functions:
+
+\begin{equation*}
   {E }_{\text{exact}}^B(G) =
   \big|G\setminus(\cup R_B)\big|
  + \sum_{i=1}^{|B|}\text{FP}(G,\r_i)+\text{FN}(G,\r_i)+I(G,\r_i,\ell_i).
-\end{equation}
+\end{equation*}
+\end{definition}
 
 \subsection{Implementation}
 
@@ -1124,7 +1129,7 @@ Figure~\ref{fig:variable-density-signals-flsa}.
 \newpage
 
 In particular, for every signal $i\in\{1,\dots,n\}$, let
-$\mathbf y_i\in\RR^{d_i}$ be the noisy signals, sampled at positions
+$\mathbf y_i\in\RR^{d_i}$ be the noisy data, sampled at positions
 $\mathbf p_i\in\mathcal P^{d_i}$. To find an optimal penalty for these data,
 first let $\lambda_2 = \lambda d_i^\alpha$. For each signal $i$,
 exponent $\alpha\in\RR$, and tradeoff parameter $\lambda\in\RR^+$, we
@@ -1162,8 +1167,7 @@ E^B_{\text{exact}}
 \right],
 \end{equation}
 where the breakpoint function $\phi$ is defined in
-(\ref{eq:breaks_phi}) and the error $E_{\text{exact}}^B$ is defined
-(\ref{eq:exact_breakpoint_cost}).
+(\ref{eq:breaks_phi}).
 
 We plot $E_i^\alpha$ for 2 signals $i$ and several penalty exponents
 $\alpha$ in Figure~\ref{fig:variable-density-berr-flsa}. Note that the
@@ -1388,7 +1392,7 @@ Similarly, the annotation-dependent false negative count is defined as
 
 \begin{definition}
   Let $A$ be a set of annotations and $G\subseteq \mathbb B$
-  a set of breakpoint guesses. The incomplete annotation error is the
+  a set of breakpoint guesses. The \textbf{incomplete annotation error} is the
   count of annotation-dependent false positives and false negatives:
 \begin{equation*}
   E^A_{\text{incomplete}}(G)=
@@ -1415,7 +1419,7 @@ approximation induced by the annotation process.
 
 Given any set of non-intersecting annotations $A$, we can write
 $\underline r_1 < \cdots < \underline r_n$ to order the regions. Then
-we can define $|A|+1$ negative regions as
+we can define $|A|+1$ negative annotations as
 \begin{equation} 
   \label{eq:A^0}
    A^0 = \big\{ 
@@ -1457,21 +1461,20 @@ and there are several interesting observations to note.
   \begin{itemize}
   \item In Figure~\ref{fig:variable-density-sigerr-small}, for the
     signal sampled at 7 bases/probe, the minimum of the Signal error
-    identifies the correct model with 7 segments.
-\item For the signal sampled at 374 bases/probe, the minimum of the
-  error identifies an incorrect model with only 5
-  segments.
+    identifies a model with 7 segments.
+  \item For the signal sampled at 374 bases/probe, the minimum of the
+    error identifies a model with only 5 segments.
   \end{itemize}
 \item \textbf{Breakpoint}: in these simulated data, the true
   breakpoints $B$ are available, so we can compute and minimize the
   breakpointError as a consistent model selection procedure
   \citep{sylvain-survey}. For both signals, the minimum of the
-  breakpointError identifies the correct model with 7 segments (6
+  breakpointError identifies a model with 7 segments (6
   breakpoints).
 \item \textbf{Annotation}: we use a set of annotated regions to
-  compute the incomplete annotation error, which also identifies the
-  correct model. It is clear that the annotation error is a good
-  approximation of the breakpointError. In the next section, we
+  compute the incomplete annotation error, which also identifies a
+  model with 7 segments. It is clear that the annotation error is a
+  good approximation of the breakpointError. In the next section, we
   explicitly demonstrate the link between the breakpointError and the
   annotation error.
 \end{itemize}
@@ -1516,15 +1519,11 @@ annotation error. There are two steps:
   annotations.
 \end{enumerate}
 
-\begin{proposition}
-  TODO
-\end{proposition}
-
 %\subsection{The complete annotation error}
 
-We define the complete annotation error as a relaxation of the exact
+We will define the complete annotation error as a relaxation of the exact
 breakpointError. So first, let us recall the definition of the exact
-breakpointError from (\ref{eq:exact_breakpoint_cost}):
+breakpointError from Definition~\ref{def:exact_breakpoint_cost}:
 $$
   {E }_{\text{exact}}^B(G) =
   \big|G\setminus(\cup R_B)\big|
@@ -1534,7 +1533,7 @@ To define the complete annotation error, we perform two relaxations:
 \begin{itemize}
 \item Instead of using (\ref{eq:R_i}) and (\ref{eq:L_i}) to determine
   a breakpoint region $\r_i$, we use the region $\hat\r_i$ determined
-  by visual inspection. %Furthermore, let $\hat R=\{\hat r_1, \dots,  \hat r_6\}$ be the set of regions that each contain 1 breakpoint.
+   by visual inspection. %Furthermore, let $\hat R=\{\hat r_1, \dots,  \hat r_6\}$ be the set of regions that each contain 1 breakpoint.
 \item Rather than the piecewise affine imprecision $\ell_i$, we use
   the zero-one imprecision $\hat \ell_i$:
 \begin{equation}
@@ -1545,17 +1544,25 @@ We show this relaxation by ploting the imprecision functions $\ell_i$
 and $\hat \ell_i$ in the bottom panels of
 Figure~\ref{fig:variable-density-annotation-cost}.
 \end{itemize}
-So, performing these two relaxations results in the following
-definition of the complete annotation error:
-\begin{eqnarray}
-  E_{\text{complete}}^{\hat A} (G)
-&=&  \Big|G\setminus(\cup \hat A)\Big| \nonumber
- + \sum_{i=1}^{|\hat A|}
-\text{FP}(G,\hat\r_i)+\text{FN}(G,\hat\r_i)+I(G,\hat\r_i,\hat\ell_i)\\
-&=&  \Big|G\setminus(\cup \hat A)\Big|
- + \sum_{(a,\hat\r)\in\hat A}
-\text{FP}(G,\hat\r)+\text{FN}(G,\hat\r)
-\end{eqnarray}
+
+\begin{definition}
+  Assume there are $n$ breakpoints $B_1 < \dots < B_n$, and we observe
+  a set of annotations $\hat A= \{(a_1, \hat\r_1), \dots, (a_n,
+  \hat\r_n)\}$ each with $a_i=1$ breakpoint, such that $B_1\in \hat
+  \r_1, \dots, B_n\in\hat \r_n$. The \textbf{complete annotation
+    error} of a set of breakpoint guesses $G$ is the sum of false positive and
+  false negative counts:
+  \begin{eqnarray*}
+    E_{\textrm{complete}}^{\hat A} (G)
+    &=&  \Big|G\setminus(\cup \hat A)\Big| \nonumber
+    + \sum_{i=1}^{|\hat A|}
+    \textrm{FP}(G,\hat\r_i)+\textrm{FN}(G,\hat\r_i)+I(G,\hat\r_i,\hat\ell_i)\\
+    &=&  \Big|G\setminus(\cup \hat A)\Big|
+    + \sum_{(a,\hat\r)\in\hat A}
+    \textrm{FP}(G,\hat\r)+\textrm{FN}(G,\hat\r).
+  \end{eqnarray*}
+\end{definition}
+
 It is clear that $E^{\hat A}_{\text{complete}}$ depends on the
 annotations only through their regions. In particular, the annotated
 breakpoint counts $a_i=\{1\}$ are not used in this definition, since
@@ -1563,16 +1570,21 @@ we assumed that each region $\hat \r_i$ contains exactly 1
 break. Also, since we used the zero-one loss for $\hat\ell_i$, the
 imprecision function $I$ is always zero.
 
+\begin{proposition}
+  Let $\hat A^0$ be a set of negative annotations as in
+  (\ref{eq:A^0}). Then for a set of breakpoint guesses $G$, the
+  incomplete and complete annotation error functions are equivalent:
+\begin{equation*}
+  E_{\text{incomplete}}^{\hat A\cup \hat A^0}(G)
+=
+E^{\hat A}_{\text{complete}}(G).
+\end{equation*}
+\end{proposition}
 
-
-% First, let us enlarge the set of annotated regions so that it covers
-% all the possible breakpoints $\mathbb B$. 
-%\subsection{Equivalence of complete and incomplete annotation error}
-
-
+\begin{proof}
 
 To see the connection between the complete and incomplete annotation
-error functions, note that
+error functions, first note that
 \begin{eqnarray}
 \nonumber  \hat{\text{FN}}(G,\r,\{1\}) 
 &=&   \big(
@@ -1608,8 +1620,8 @@ regions in (\ref{eq:A^0}), we have
  = 
 G\cap\left(\cup \hat A^0 \right),
 \end{equation}
-or in words, the guesses outside of the breakpoint regions $\hat A$
-are in the negative regions $\hat A^0$. So using
+or in words, the guesses outside of the breakpoint annotations $\hat A$
+are in the negative annotations $\hat A^0$. So using
 (\ref{eq:Rcomplement}), we have
 \begin{eqnarray}
   \hat{\text{FP}}(G,(\cup \hat A^0),\{0\})
@@ -1623,13 +1635,11 @@ are in the negative regions $\hat A^0$. So using
 \end{eqnarray}
 which is the first component of the complete annotation loss.
 
-
-
 Recall that $\hat A$ represents annotated regions that each contain
 exactly 1 breakpoint, and $\hat A^0$ are regions with no breakpoints. So
 using (\ref{eq:fn-hat}), (\ref{eq:fp-hat}), and
-(\ref{eq:fp-outside}), we can show that the incomplete annotation error
-is equivalent to the complete error in this sense:
+(\ref{eq:fp-outside}), we have that the incomplete annotation error
+is equivalent to the complete error:
 \begin{eqnarray}
   E_{\text{incomplete}}^{\hat A\cup \hat A^0}(G)
 &=&
@@ -1650,6 +1660,8 @@ is equivalent to the complete error in this sense:
 E^{\hat A}_{\text{complete}}(G).
 \end{eqnarray}
 
+\end{proof}
+
 So in fact the incomplete annotation error is equivalent to the
 complete error when the annotated regions $\hat A$ each contain
 exactly 1 breakpoint. But we call this the incomplete error since it
@@ -1666,7 +1678,7 @@ The incomplete annotation error counts incorrect breakpoints. In this
 section, we show that by thresholding the incomplete annotation error,
 we can obtain the zero-one annotation error function. This is the
 original annotation error function that was introduced by
-\citet{HOCKING-breakpoints}, who used it to counts the number of
+\citet{HOCKING-breakpoints}, who used it to count the number of
 incorrect regions.
 
 First, let us define the zero-one thresholding function
@@ -1763,24 +1775,22 @@ model, but not uniquely.
   \label{fig:variable-density-sigerr}
 \end{figure}
 
-
-
-
-
+\newpage
 
 \section{Conclusions and future work}
 
 In this paper we defined the breakpointError, which can be used to
-quantify the breakpoint detection accuracy of a segmentation model. We
-showed one application of the breakpointError for determining optimal
-penalty constants in certain theoretical situations and simulation
-studies. We also discussed the relationship of the breakpointError to
-the annotation error, which has been used for supervised segmentation
-of real data sets \citep{HOCKING-breakpoints, HOCKING-penalties,
-  SegAnnDB}. We have shown that the annotation error is a good
-approximation of the breakpointError when the annotated regions agree
-with the true breakpoints. This provides some justification for using
-the annotation error in supervised analysis of real data sets.
+quantify the breakpoint detection accuracy of a segmentation model,
+when the true breakpoint positions are known. In Section~4 we showed
+one application of the breakpointError for determining optimal penalty
+constants in several simulated data sets. In Section~5 we discussed
+the relationship of the breakpointError to the annotation error, which
+has been used for supervised segmentation of real data sets
+\citep{HOCKING-breakpoints, HOCKING-penalties, SegAnnDB}. We showed
+that the annotation error is a good approximation of the
+breakpointError when the annotated regions agree with the true
+breakpoints. This provides some justification for using the annotation
+error in supervised analysis of real data sets.
 
 For future work, it will be interesting to apply the breakpointError
 to more realistic tasks. For example, \citet{perf-eval-framework}
