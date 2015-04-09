@@ -26,22 +26,29 @@ p <- ggplot(stat.df,aes(alpha,mean,group=beta))+
 
 p <- 
 ggplot()+
+  xlab("beta (exponent of signal length in bases)")+
+  ylab("alpha (exponent of number of data points)")+
   geom_tile(aes(alpha,beta,fill=mean.norm),data=stat.df)+
-  geom_point(aes(alpha,beta), data=min.df, color="red")+
-  stat_contour(aes(alpha,beta,z=mean.norm),
-               data=stat.df,
-               breaks=seq(0, 0.2, by=0.05),
-               color="red")+
+  ## stat_contour(aes(alpha,beta,z=mean.norm),
+  ##              data=stat.df,
+  ##              breaks=seq(0, 0.2, by=0.05),
+  ##              color="red")+
+  scale_color_manual(values=c(minimum="red", expected="white"))+
+  scale_shape_manual(values=c(minimum=20, expected=1))+
+  geom_point(aes(alpha,beta,shape=value, color=value),
+             data=data.frame(min.df, value="minimum"))+
+  geom_point(aes(alpha,beta, shape=value, color=value),
+             data=data.frame(alpha=-0.5,beta=0.5, value="expected"))+
   ## geom_dl(aes(alpha,beta,z=mean.norm,label=..level..),
   ##         data=stat.df, color="red",
   ##         method="bottom.pieces",
   ##         stat="contour")+
   facet_grid(.~what)+
-  theme_bw()+
-  ##scale_fill_gradient2(low="skyblue", high="black")+
-  theme(panel.margin=grid::unit(0, "cm"))
+  theme_grey()
+  ##theme_bw()+  theme(panel.margin=grid::unit(0, "cm"))
 
-pdf("figures/variable-size-error-alpha-beta.pdf",h=3,w=6)
+
+pdf("figures/variable-size-error-alpha-beta.pdf",h=4,w=7)
 ##library(tikzDevice);options(tikzDocumentDeclaration="\\documentclass[11pt]{memoir}",tikzMetricsDictionary="tikzMetrics")
 ##tikz("figures/variable-size-error-alpha-beta.tex",h=3,w=6)
 print(p)

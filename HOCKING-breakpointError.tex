@@ -1023,9 +1023,11 @@ in this section we show that this intuitive construction results in an
 optimal penalty.
 
 In Figure~\ref{fig:variable-size-signals}, we plot 2 signals with
-different number of points $d_i$ and length in base pairs $l_i$. We
-would like to find a penalty that allows us to generalize model
-complexity tradeoff parameters $\lambda$ between these signals.
+different number of points $d_i$ and length in base pairs $l_i$. In
+particular we tested $d_i\in\{50, \dots, 1000\}$ and $l_i\in\{200,
+\dots, 1000\}$. We would like to find a penalty that allows us to
+generalize model complexity tradeoff parameters $\lambda$ between
+these signals.
 
 For each signal $i$, we define the penalty
 \begin{equation}
@@ -1052,28 +1054,21 @@ find $\alpha=1/2$ and $\beta=-1/2$.
 
 In Figure~\ref{fig:variable-size-error-alpha-beta}, we plot the train
 and test breakpoint error functions as a function of both $\alpha$ and
-$\beta$. It is clear that the minimum is achieved by penalties with
-$\alpha = -\beta$. One such penalty is indeed $\alpha=1/2,
-\beta=-1/2$, as indicated from the analysis of the previous
-sections.
-
-Note that in the simulated signals $i$ in this section, we have $l_i =
-d_i$. Thus the penalty with $\alpha=0,\beta=0$ performs just as well
-as the penalty with $\alpha=1/2,\beta=-1/2$, since they are in fact
-the same penalty:
+$\beta$. It is clear that the minimum is achieved by penalties near
+$\alpha=1/2, \beta=-1/2$, which corresponds to a penalty of
 
 \begin{equation}
-  \label{eq:kstar_composite_same}
-  k_i^{0,0}(\lambda) = 
-\argmin_k \lambda k + ||\mathbf y_i - \mathbf{\hat y}_i^k||^2_2
+  \label{eq:kstar_composite_values}
+  k_i^{\alpha,\beta}(\lambda) = \argmin_k \lambda k
+  \sqrt{d_i/l_i}
+  + ||\mathbf y_i - \mathbf{\hat y}_i^k||^2_2,
 \end{equation}
 
 \figpdf{variable-size-error-alpha-beta}{Train and test error functions
-  for several signals of varying number of points $d_i$ and length in
-  base pairs $l_i$. Mean error values normalized to $[0,1]$ in order
-  to clearly visualize the minimum values at $\alpha = -\beta$ for
-  both the train and test error. The penalty contains a term
-  $d_i^\alpha l_i^\beta$.}
+  for several signals of varying number of points $d_i$ and length
+  $l_i$. The penalty contains a term $d_i^\alpha l_i^\beta$. Mean
+  error values normalized to $[0,1]$, minimum values indicated in red,
+  and expected value $\alpha=1/2, \beta=-1/2$ in white. }
 
 % \newpage
 

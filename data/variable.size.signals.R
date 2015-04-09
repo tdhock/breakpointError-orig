@@ -51,7 +51,7 @@ sample.signal <- function(until, by){
 
 ## the mean signal (green line)
 seg.size <- 100
-means <- rep(c(-3,0,3,0,2,-1,3),100)/3
+means <- rep(c(-3,0,3,0,2,-1,3),100)/2.5
 mu <- do.call(c,lapply(means,rep,seg.size))
 locations <- seq_along(mu)
 d <- length(mu)
@@ -61,10 +61,10 @@ set.seed(1)
 sig <- rnorm(d,mu)
 
 go.until <- c(200,400,700,1000,2000,4000,7000,10000)
-go.until <- c(200,400,800)
+go.until <- c(200,400,600,800, 1000)
 go.by <- c(1, 2, 4)
 go.by <- 1
-go.by <- c(1, 2, 4)
+go.by <- c(1, 4)
 n.signals <- length(go.until)
 variable.size.signals <- list()
 for(by in go.by){
