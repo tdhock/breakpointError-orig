@@ -1,6 +1,5 @@
 load("data/variable.size.show.RData")
 signal.df <- do.call(rbind,lapply(variable.size.show, with, {
-  print(signal)
   data.frame(locations,signal,mu,length=size, data=length(mu))
 }))
 library(ggplot2)
