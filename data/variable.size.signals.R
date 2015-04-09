@@ -4,15 +4,14 @@
 source("data/precise.breakpoint.cost.R")
 source("data/run.cghseg.R")
 
-
-sample.signal <- function(until){
-  locations <- 1:until
+sample.signal <- function(until, by){
+  locations <- seq(1, until, by=by)
   signal <- sig[locations]
   result <- run.cghseg(signal,round(until/50))
+  result$signal <- signal
   result$mu <- mu[locations]
   result$mu.breaks <- which(diff(result$mu)!=0)
   result$locations <- locations
-  result$signal <- signal[locations]
   result$size <- until
   result$breaks <- apply(result$smooth,2,function(sm){
     break.after.i <- which(diff(sm)!=0)
@@ -60,13 +59,17 @@ set.seed(1)
 sig <- rnorm(d,mu)
 
 go.until <- c(200,400,700,1000,2000,4000,7000,10000)
+go.by <- c(1, 2, 4)
+go.by <- 1
+go.by <- c(1, 10)
 n.signals <- length(go.until)
 variable.size.signals <- list()
-for(sig.i in 1:n.signals){
-  cat(sprintf("simulating signal %4d / %4d\n",sig.i,n.signals))
-  size <- go.until[sig.i]
-  variable.size.signals[[sig.i]] <- sample.signal(size)
+for(by in go.by){
+  for(sig.i in 1:n.signals){
+    cat(sprintf("simulating signal %4d / %4d\n",sig.i,n.signals))
+    size <- go.until[sig.i]
+    variable.size.signals[[paste(sig.i, by)]] <- sample.signal(size, by)
+  }
 }
-
 save(variable.size.signals,file="data/variable.size.signals.RData")
 

@@ -1,8 +1,16 @@
 load("data/variable.size.alpha.beta.RData")
 library(plyr)
-stat.df <- ddply(variable.size.alpha.beta$stats,.(what),
+lim <- 1.21
+some.stats <- 
+subset(variable.size.alpha.beta$stats,
+       -lim <= alpha & alpha <= lim &
+         -lim <= beta & beta <= lim)
+stat.df <- ddply(some.stats,.(what),
                  transform,
                  mean.norm=(mean-min(mean))/(max(mean)-min(mean)))
+min.df <- ddply(some.stats,.(what),
+                 subset,
+                 mean==min(mean))
 library(ggplot2)
 p <- ggplot(stat.df,aes(alpha,mean,group=beta))+
   geom_ribbon(aes(ymin=ifelse(mean-sd<0,0,mean-sd),ymax=mean+sd),alpha=1/2)+
@@ -19,7 +27,15 @@ p <- ggplot(stat.df,aes(alpha,mean,group=beta))+
 p <- 
 ggplot()+
   geom_tile(aes(alpha,beta,fill=mean.norm),data=stat.df)+
-  ##stat_contour(aes(alpha,beta,z=mean),data=stat.df)+
+  geom_point(aes(alpha,beta), data=min.df, color="red")+
+  stat_contour(aes(alpha,beta,z=mean.norm),
+               data=stat.df,
+               breaks=seq(0, 0.2, by=0.05),
+               color="red")+
+  ## geom_dl(aes(alpha,beta,z=mean.norm,label=..level..),
+  ##         data=stat.df, color="red",
+  ##         method="bottom.pieces",
+  ##         stat="contour")+
   facet_grid(.~what)+
   theme_bw()+
   ##scale_fill_gradient2(low="skyblue", high="black")+

@@ -1243,27 +1243,24 @@ the neuroblastoma data set. This observation suggests that
 distribution that generates the real data is more complex than the
 simple simulation model considered in this paper.
 
-\tab{penalty-real-data}{Breakpoint detection error of several penalties on the
-  neuroblastoma data set, with 1 row for each penalty. The exponent of
-  the points $d_i$, length $l_i$, and variance $\hat s_i$ terms in the
-  penalty is shown with the train and test error in percent. }
+\tab{penalty-real-data}{Breakpoint detection error of several
+  penalties on the neuroblastoma data set, with 1 row for each
+  penalty. The exponent of the points $d_i$, length $l_i$, and
+  variance $\hat s_i$ terms in the penalty is shown with the train and
+  test annotation error (percent incorrect regions). }
 
 Practically speaking, we still would like to find a penalty with
-optimal breakpoint detection for any particular real data set. To do
-that, \citet{HOCKING-breakpoints} suggested creating a database of
-manually annotated regions that can be used with the zero-one
-annotation error function (\ref{eq:ann01err}). For even better
-breakpoint detection, one can use a database of manually annotated
-regions to learn a penalty function \citep{HOCKING-penalties}. These
-annotation-guided techiniques have proven to yield accurate penalties
-for breakpoint detection in real data. For the rest of this paper, we
-will discuss the relationship of the breakpointError to these
-annotation-guided methods.
-
-
-
-
-
+optimal breakpoint detection for any particular real data set such as
+the neuroblastoma data. 
+\citet{HOCKING-penalties} achieved state-of-the-art breakpoint
+detection in the neuroblastoma data set by learning
+the penalty constants using a training data set of manually annotated
+regions. 
+%These annotation-guided techiniques have proven to yield
+%accurate penalties for breakpoint detection in real data. 
+For the rest
+of this paper, we will discuss the relationship of the breakpointError
+to these annotation-guided methods.
 
 \newpage
 
