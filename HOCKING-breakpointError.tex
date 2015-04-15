@@ -69,7 +69,7 @@
 
 % TODO: UNCOMMENT frontmatter for publication!
 
-%\begin{frontmatter}
+\begin{frontmatter}
   
   \titre{A breakpoint detection error function for segmentation model
   selection and evaluation}
@@ -106,7 +106,7 @@
 
 \tableofcontents
 
-%\end{frontmatter}
+\end{frontmatter}
 
   % infos fournies par l'éditeur, laisser vide
   % \volume{}
@@ -147,7 +147,7 @@ How to evaluate the accuracy of a segmentation model? A new method for
 supervised segmentation of copy number data was proposed by
 \citet{HOCKING-breakpoints}, who quantified the segmentation model
 accuracy using an annotation database containing visually-determined
-regions with breakpoints or no breakpoints.
+regions with or without breakpoints.
 % This line of research was
 % continued by \citet{HOCKING-penalties}, who proposed to use the
 % annotated regions to learn a penalty function for optimal breakpoint
@@ -166,7 +166,7 @@ breakpointError is closely related to the annotation error, thus
 giving a theoretical foundation to the very practical new methods
 based on visually-determined annotated region databases.
 
-In this introduction, we first show a few motivating examples and
+In this introduction, we first discuss a few motivating examples with
 figures. In Section~2 we discuss related work, and in Section~3 we
 define the breakpointError. In Section~4 we show an
 application of the breakpointError, and in Section~5 we discuss its
@@ -216,11 +216,11 @@ $\{300, 400\}$.
   \caption{Two signals with the same breakpoints (vertical dashed
     lines) but different distributional changes. Black circles show
     $d=100$ sampled data points drawn from normal distributions
-    defined on positions $\mathcal P=\{1, \dots, 500\}$. Horizontal line
-    segments and shaded bands show mean $\pm$ one standard
-    deviation. The goal of segmentation is to recover the
-    distributions and/or breakpoints, using only the sampled data
-    points.}
+    defined on positions $\mathcal P=\{1, \dots, 500\}$. Horizontal
+    line segments and shaded bands show mean $\pm$ one standard
+    deviation of the true normal distributions $D_p$. The goal of segmentation
+    is to recover the distributions and/or breakpoints, using only the
+    sampled data points.}
   \label{fig:motivation}
 \end{figure}
 
@@ -689,16 +689,16 @@ install.packages("breakpointError", repos="http://r-forge.r-project.org")
 
 \newpage
 
-\section{Optimal penalties for breakpoint detection in simulations}
+\section{Penalties with minimal breakpointError in simulations}
 \label{sec:simulations}
 In this section, we show several examples of how to use the
-breakpointError function to determine penalties which are optimal for
-breakpoint detection in simulated data sets. In all cases, we will
-assume that there is a database of several piecewise constant signals
-with Gaussian noise. The goal is to learn a penalty constant that can
-be shared between signals with different properties. In each of the
-following sections, we will first present an empirical analysis of
-several simulated signals using the breakpointError. Then, we will
+breakpointError function to determine penalties which minimize the
+train and test breakpointError in simulated data sets. In all cases,
+we will assume that there is a database of several piecewise constant
+signals with Gaussian noise. The goal is to learn a penalty constant
+that can be shared between signals with different properties. In each
+of the following sections, we will first present an empirical analysis
+of several simulated signals using the breakpointError. Then, we will
 discuss the relationship of our results to relevant theoretical
 results.
 
@@ -737,8 +737,8 @@ selection criterion which is invariant to sampling density.
 %\input{figures/variable-density-signals}
 \vskip -0.3cm
   \caption{Two noisy signals (black) sampled from
-  a true piecewise constant signal (blue). Note that these are the
-  same signals that appear in
+  a true piecewise constant signal (blue). 
+Note that these are the same signals that appear in
   Figure~\ref{fig:variable-density-annotation-cost}.}
 \label{fig:variable-density-signals}
 \end{figure}
@@ -1182,8 +1182,8 @@ functions appear to align when $\alpha=1$.
 \newpage
 
 To evaluate which penalty parameter $\alpha$ results in optimal
-fitting and learning, we use $E^*$ and TestErr as defined in
-(\ref{eq:lerr_train}) and (\ref{eq:lerr_test}). These functions are
+fitting and learning, we computed train error $E^*$ and TestErr as defined
+in (\ref{eq:lerr_train}) and (\ref{eq:lerr_test}). These functions are
 plotted in Figure~\ref{fig:variable-density-error-alpha-flsa}, and
 suggest that a value of $\alpha=1$ is optimal. This analysis suggests
 that taking $\lambda_2=\lambda d_i$ is optimal for breakpoint
@@ -1196,7 +1196,7 @@ Section~\ref{variable_density} for another model, maximum likelihood
 segmentation. These differences in optimal $\alpha$ values are due to
 the differences in how model complexity is measured in the two
 models. Maximum likelihood segmentation measures model complexity
-using the $\ell_0$-norm of the difference vector of $\mathbf m$,
+using the $\ell_0$ pseudo-norm of the difference vector of $\mathbf m$,
 whereas the FLSA uses the $\ell_1$-norm.
 
 We conclude by noting that this procedure could also be applied to
@@ -1215,13 +1215,14 @@ on real data \citep{HOCKING-breakpoints}.
 \subsection{Applying the penalties to real data}
 
 In Sections~\ref{variable_density}-\ref{variable_size}, we found
-optimal maximum likelihood segmentation penalties for data with
-varying sampling density and length. We also used theoretical
-arguments and simulation studies and found that the optimal penalty
-should include a term for the estimated variance $\hat s_i^2$
-\citep{HOCKING-phd-ch4}. In Section~\ref{combining_penalties}, we also
-demonstrated that these results can be combined. This analysis
-suggests the following penalty, for every signal $i$:
+penalties with minimum breakpointError for simulated data with varying
+number of data points sampled $d_i$ and length $l_i$ in base positions
+(with $l_i$ proportional to the number of breakpoints). In
+Section~\ref{combining_penalties}, we demonstrated that these results
+can be combined. We also found that the optimal penalty should include
+a term for the estimated variance $\hat s_i^2$
+\citep{HOCKING-phd-ch4}. These results suggested the following
+penalty, for every signal $i$:
 \begin{equation}
   \label{eq:composite_penalty}
   k_i(\lambda) = 
@@ -1232,17 +1233,20 @@ suggests the following penalty, for every signal $i$:
 
 In Table~\ref{tab:penalty-real-data}, we report results of using the
 suggested penalties on the neuroblastoma data set described by
-\citet{HOCKING-breakpoints}. The normalizations suggested by the
-analysis of simulations do not improve breakpoint detection error in
-the neuroblastoma data set. This observation suggests that
-distribution that generates the real data is more complex than the
-simple simulation model considered in this paper.
+\citet{HOCKING-breakpoints}. The cghseg.k penalty which was found to
+be the best by \citet{HOCKING-breakpoints} has a term for number of
+data points sampled $d_i$ (no square root) but no terms for length
+$l_i$ nor estimated variance $\hat s_i$. The penalty terms suggested
+in this section do not improve breakpoint detection error in the
+neuroblastoma data set. This observation suggests that distribution
+that generates the real data is more complex than the simple
+simulation model considered in this paper.
 
 \tab{penalty-real-data}{Breakpoint detection error of several
   penalties on the neuroblastoma data set, with 1 row for each
-  penalty. The exponent of the points $d_i$, length $l_i$, and
-  variance $\hat s_i$ terms in the penalty is shown with the train and
-  test annotation error (percent incorrect regions). }
+  penalty. The exponent of the number of data points $d_i$, length
+  $l_i$, and variance $\hat s_i$ terms in the penalty is shown with
+  the train and test annotation error (percent incorrect regions). }
 
 Practically speaking, we still would like to find a penalty with
 optimal breakpoint detection for any particular real data set such as
@@ -1278,7 +1282,7 @@ annotation error function.
     Section & Error function & Symbol & Need & counts incorrect \\
     \hline
     \ref{sec:breakpoint_error}& breakpointError & $E^B_{\text{exact}}$ & 
-    true breaks $B$ & guesses \\
+    true breakpoints $B$ & guesses \\
     \ref{sec:incomplete} & incomplete annotation error & $E_{\text{incomplete}}^A$ &
     some annotations $A$ & guesses\\
     \ref{sec:complete} & complete annotation error & $E_{\text{complete}}^A$ & 
@@ -1521,9 +1525,10 @@ annotation error. There are two steps:
 
 %\subsection{The complete annotation error}
 
-We will define the complete annotation error as a relaxation of the exact
-breakpointError. So first, let us recall the definition of the exact
-breakpointError from Definition~\ref{def:exact_breakpoint_cost}:
+We will define the complete annotation error as a relaxation of the
+exact breakpointError. Recall from
+Definition~\ref{def:exact_breakpoint_cost}, 
+the exact breakpointError is
 $$
   {E }_{\text{exact}}^B(G) =
   \big|G\setminus(\cup R_B)\big|
@@ -1531,9 +1536,11 @@ $$
 $$
 To define the complete annotation error, we perform two relaxations:
 \begin{itemize}
-\item Instead of using (\ref{eq:R_i}) and (\ref{eq:L_i}) to determine
-  a breakpoint region $\r_i$, we use the region $\hat\r_i$ determined
-   by visual inspection. %Furthermore, let $\hat R=\{\hat r_1, \dots,  \hat r_6\}$ be the set of regions that each contain 1 breakpoint.
+\item Instead of using the true breakpoints $B$ (which are unknown in
+  real data) with equations (\ref{eq:R_i}) and (\ref{eq:L_i}) to
+  determine a breakpoint region $\r_i$, we use the region $\hat\r_i$
+  determined by visual
+  inspection.
 \item Rather than the piecewise affine imprecision $\ell_i$, we use
   the zero-one imprecision $\hat \ell_i$:
 \begin{equation}
@@ -1567,7 +1574,7 @@ It is clear that $E^{\hat A}_{\text{complete}}$ depends on the
 annotations only through their regions. In particular, the annotated
 breakpoint counts $a_i=\{1\}$ are not used in this definition, since
 we assumed that each region $\hat \r_i$ contains exactly 1
-break. Also, since we used the zero-one loss for $\hat\ell_i$, the
+breakpoint. Also, since we used the zero-one imprecision for $\hat\ell_i$, the
 imprecision function $I$ is always zero.
 
 \begin{proposition}
@@ -1633,7 +1640,7 @@ are in the negative annotations $\hat A^0$. So using
 &=&
 |G\setminus(\cup\hat A)|,\label{eq:fp-outside}
 \end{eqnarray}
-which is the first component of the complete annotation loss.
+which is the first component of the complete annotation error.
 
 Recall that $\hat A$ represents annotated regions that each contain
 exactly 1 breakpoint, and $\hat A^0$ are regions with no breakpoints. So
@@ -1778,16 +1785,15 @@ model, but not uniquely.
 In conclusion, this section has discussed the connections between the
 breakpointError and the annotation error functions. Whereas the
 breakpointError is computable only when the true set of breakpoints is
-known, the annotation error is readily computable given a set of
-annotations, usually determined by visual inspection of the data. We
-showed that if the annotations are consistent with the true
-breakpoints, then the annotation error function is a good
+known (e.g. simulated data), the annotation error is readily
+computable in any data set using a set of visually determined
+annotations. We showed that if the annotations are consistent with the
+true breakpoints, then the annotation error function is a good
 approximation of the breakpointError
 (Figure~\ref{fig:variable-density-sigerr-small}). Finally, we observed
 that even after thresholding and removing annotations, the annotation
 error function can still be used to identify a set of minimum error
-segmentation models
-(Figure~\ref{fig:variable-density-sigerr}).
+segmentation models (Figure~\ref{fig:variable-density-sigerr}).
 
 %\newpage
 
@@ -1820,14 +1826,16 @@ negative breakpoint detections.
 
 To facilitate the use of the breakpointError in future work, it is
 implemented in the R package \verb|breakpointError| on R-Forge. It can
-be install in R using
+be installed in R using
 
 \begin{verbatim}
 install.packages("breakpointError", repos="http://r-forge.r-project.org")
 \end{verbatim}
 
 \textbf{Acknowledgements}: Thanks to Marco Cuturi for references about
-distance functions for comparing probability distributions.
+distance functions for comparing probability distributions. Thanks to
+Guillem Rigaill for helpful comments on a preliminary version of this
+paper.
 
 %\bibliographystyle{abbrvnat}
 \bibliography{refs}
