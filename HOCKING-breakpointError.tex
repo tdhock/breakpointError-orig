@@ -1,4 +1,7 @@
-\documentclass{jsfds} %autoloads graphicx
+\documentclass{article}
+\usepackage{fullpage}
+\usepackage{graphicx}
+%\documentclass{jsfds} %autoloads graphicx
 
 % latin1 encoding is strongly adviced; 
 \usepackage[latin1]{inputenc}
@@ -12,16 +15,16 @@
 \newtheorem{definition}{Definition}
 \newtheorem{lemma}{Lemma}
 \newtheorem{proposition}{Proposition}
-\usepackage{dtklogos}
+%\usepackage{dtklogos}-+
 \usepackage{url}
 \usepackage{natbib}
 
-\startlocaldefs
+%\startlocaldefs
 % Commandes auteurs spécifiques, par exemple :
 \newcommand{\fig}[3][H]{
   \begin{figure}[#1]
     \hskip -1cm
-    \input{figures/#2}
+    \input{figure-#2}
     \caption{#3}
     \label{fig:#2}
   \end{figure}
@@ -29,7 +32,7 @@
 \newcommand{\figpdf}[3][H]{
   \begin{figure}[#1]
     \hskip -1cm
-    \includegraphics[width=\textwidth]{figures/#2}
+    \includegraphics[width=\textwidth]{figure-#2}
     \caption{#3}
     \label{fig:#2}
   \end{figure}
@@ -60,34 +63,40 @@
 \newcommand{\RR}{\mathbb{R}}
 %\newcommand{\E}{\mbox{\tiny \`eme}}
 %\def\1{1\kern-.20em {\rm l}}
-\endlocaldefs
+%\endlocaldefs
 
-\setmainlanguageenglish
-\firstpage{1} % à régler par l'éditeur
+%\setmainlanguageenglish
+%\firstpage{1} % à régler par l'éditeur
 
 \begin{document}
 
 % TODO: UNCOMMENT frontmatter for publication!
 
-\begin{frontmatter}
+%\begin{frontmatter}
   
-  \titre{A breakpoint detection error function for segmentation model
-  selection and evaluation}
-  \titrecourant{A breakpoint detection error function for segmentation model
-  selection and evaluation}
+  % \titre{A breakpoint detection error function for segmentation model
+  % selection and evaluation}
+  % \titrecourant{A breakpoint detection error function for segmentation model
+  % selection and evaluation}
 
-  \begin{InfosAuteurs}
-    \auteur{%
-      \prenom{Toby Dylan} \nom{Hocking}%
-      \thanksref{t1}%
-      \contact[label=e1]{toby.hocking@mail.mcgill.ca}%
-    }%
-    \affiliation[t1]{McGill University Department of Human Genetics, 
-      Montr\'eal, Canada.\\
-      \printcontact{e1}%
-    }
-    \enteteauteurs{TD Hocking} %noms courants des auteurs en tête de page
-  \end{InfosAuteurs}
+  % \begin{InfosAuteurs}
+  %   \auteur{%
+  %     \prenom{Toby Dylan} \nom{Hocking}%
+  %     \thanksref{t1}%
+  %     \contact[label=e1]{toby.hocking@mail.mcgill.ca}%
+  %   }%
+  %   \affiliation[t1]{McGill University Department of Human Genetics, 
+  %     Montr\'eal, Canada.\\
+  %     \printcontact{e1}%
+  %   }
+  %   \enteteauteurs{TD Hocking} %noms courants des auteurs en tête de page
+  % \end{InfosAuteurs}
+
+  \title{A breakpoint detection error function for segmentation model
+    selection and evaluation}
+  \author{Toby Dylan Hocking}
+
+\maketitle
 
   \begin{abstract}
     We consider the multiple breakpoint detection problem, which is
@@ -106,30 +115,30 @@
 
 \tableofcontents
 
-\end{frontmatter}
+%\end{frontmatter}
 
   % infos fournies par l'éditeur, laisser vide
   % \volume{}
   % \numero{}
   % \anneepublication{}
   % \doi{}
- \arxiv{math.PR/00000000} % Si disponible
+  %\arxiv{math.PR/00000000} % Si disponible
 
   
-  \begin{motscles}
-    \mot{mode d'emploi}%
-    \mot{classe du J-SFdS}%
-  \end{motscles}
+  % \begin{motscles}
+  %   \mot{mode d'emploi}%
+  %   \mot{classe du J-SFdS}%
+  % \end{motscles}
 
-  \begin{motsclesalter}
-    \mot{users guide}
-    \mot{J-SFdS document class}
-  \end{motsclesalter}
+  % \begin{motsclesalter}
+  %   \mot{users guide}
+  %   \mot{J-SFdS document class}
+  % \end{motsclesalter}
   
-  \begin{AMSclass}
-    \kwd{35L05}
-    \kwd{35L70}
-  \end{AMSclass}
+  % \begin{AMSclass}
+  %   \kwd{35L05}
+  %   \kwd{35L70}
+  % \end{AMSclass}
  
 \newpage
 
@@ -211,7 +220,7 @@ $\{300, 400\}$.
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=\textwidth]{figure-motivation}
+  \includegraphics[width=\textwidth]{figure-motivation.pdf}
   \vskip -0.5cm
   \caption{Two signals with the same breakpoints (vertical dashed
     lines) but different distributional changes. Black circles show
@@ -579,7 +588,7 @@ signal in Figure~\ref{fig:exact_imprecision}.
 
 \begin{figure}[H]
   \centering
-  \input{figures/breakpoint-error-pieces}
+  \input{figure-breakpoint-error-pieces}
   \vskip -0.5cm
   \caption{For a small signal with 2 breakpoints, and for breakpoints
     $i\in\{1, 2\}$, we plot the $\ell_i$ functions that measure the
@@ -733,8 +742,8 @@ on the second noisy signal. In other words, we are looking for a model
 selection criterion which is invariant to sampling density. 
 
 \begin{figure}[H]
-\includegraphics[width=\linewidth]{figures/variable-density-signals}
-%\input{figures/variable-density-signals}
+\includegraphics[width=\linewidth]{figure-variable-density-signals}
+%\input{figure-variable-density-signals}
 \vskip -0.3cm
   \caption{Two noisy signals (black) sampled from
   a true piecewise constant signal (blue). 
@@ -1044,7 +1053,7 @@ find $\alpha=1/2$ and $\beta=-1/2$.
 
 \begin{figure}[H]
   \centering
-\includegraphics[width=\linewidth]{figures/variable-size-signals}
+\includegraphics[width=\linewidth]{figure-variable-size-signals}
   \caption{Two signals with a different number of
     points $d_i$ and length in base pairs $l_i$.}
 \label{fig:variable-size-signals}
@@ -1123,7 +1132,7 @@ Figure~\ref{fig:variable-density-signals-flsa}.
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=\linewidth]{figures/variable-density-signals}
+  \includegraphics[width=\linewidth]{figure-variable-density-signals}
   \caption{Simulated signals with different
   sampling density.}
   \label{fig:variable-density-signals-flsa}
@@ -1310,8 +1319,8 @@ Figure~\ref{fig:variable-density-annotation-cost}.
 
 \begin{figure}[H]
   \centering
-\includegraphics[width=\linewidth]{figures/variable-density-annotation-cost}
-%\input{figures/variable-density-annotation-cost}
+\includegraphics[width=\linewidth]{figure-variable-density-annotation-cost}
+%\input{figure-variable-density-annotation-cost}
 \vskip -0.1in
   \caption{\textbf{Top}: simulated noisy
   signals (black) with their true piecewise constant signals $\mathbf m$ (blue) 
@@ -1484,7 +1493,7 @@ and there are several interesting observations to note.
 \end{itemize}
 \begin{figure}[H]
   \centering
-  \input{figures/variable-density-sigerr-small}
+  \input{figure-variable-density-sigerr-small}
   \vskip -0.5cm
   \caption{Model selection error curves for 2 simulated
     signals. Minima are highlighted using circles.
@@ -1760,7 +1769,7 @@ model, but not uniquely.
 
 \begin{figure}[H]
   %\hspace{-1.5cm}
-  \input{figures/variable-density-sigerr}
+  \input{figure-variable-density-sigerr}
   \caption{Comparison of annotation error functions as the set of
     annotations changes. Minima are highlighted using circles.
     \protect\\
@@ -1837,7 +1846,7 @@ distance functions for comparing probability distributions. Thanks to
 Guillem Rigaill for helpful comments on a preliminary version of this
 paper.
 
-%\bibliographystyle{abbrvnat}
+\bibliographystyle{abbrvnat}
 \bibliography{refs}
 
 \end{document}
