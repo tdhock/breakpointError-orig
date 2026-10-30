@@ -194,4 +194,14 @@ installing to /home/local/USHERBROOKE/hoct2726/lib/R/library/00LOCK-Segmentor3Is
   - [[file:table-penalty-real-data.R]]
     - install bams from CRAN Archive
 
- 
+*** Summary table of issues and solutions
+
+Overall there were five distinct issues and solutions.
+
+| issue                                                    | solution                               | examples                             |
+|----------------------------------------------------------+----------------------------------------+--------------------------------------|
+| old version did not install                              | use more recent version                | R, Segmentor3IsBack, breakpointError |
+| original code errors using new version                   | downgrade to older version             | changepoint                          |
+| original code errors using new version                   | write code compatible with new version | ggplot2                              |
+| results qualitatively consistent,  but numbers different | RNGversion()                           |                                      |
+| different figure details                                 | factor()                               | facet order, missing data            |
