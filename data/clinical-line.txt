@@ -1,0 +1,55 @@
+"aCGH_BIS_Patient_Number" "ID_HuTuDB" "ID_INES" "DATE_Naissance" "GENDER 1=masculin, 2=feminin" "Institution " "Pays" "SERIE" "PROTOCOL_NAME" "DATE_DIAGNOSTIC" "Date_dernieres_nouvelles" "Dernier_status        0 =vivant       1=DCD" "D�tails_Status   Remission complete = 1
+Rem partielle = 2
+progression = 9
+maladie stable = 6 
+non evaluable = 7
+de la maladie = 10
+Toxicit� = 11
+Autre cause = 12" "DATE_DECES" "LOCALISATION_TUMEUR_PRIMITIVE  0 = inconnu
+1 = Cervical
+2 = Thoracique
+4 = abdomen surr�n / ADR
+20 = abdomen autre / ABD
+8 = pelvis" "METASTASIS   NA = 8
+ND = 9
+OUI = 1
+Non = 0" "Pulmonaire  NA = 8
+ND = 9
+OUI = 1
+Non = 0" "Pleural NA = 8
+ND = 9
+OUI = 1
+Non = 0" "M�dullaire NA = 8
+ND = 9
+OUI = 1
+Non = 0" "h�patique NA = 8
+ND = 9
+OUI = 1
+Non = 0" "osseuse  NA = 8
+ND = 9
+OUI = 1
+Non = 0" "granglionaire � distance NA = 8
+ND = 9
+OUI = 1
+Non = 0" "ss cutan� NA = 8
+ND = 9
+OUI = 1
+Non = 0" "SNC NA = 8
+ND = 9
+OUI = 1
+Non = 0" "M�ninge NA = 8
+ND = 9
+OUI = 1
+Non = 0" "Autres  NA = 8
+ND = 9
+OUI = 1
+Non = 0" "INSS_STAGING" "Stade 4 versus autre  0=autres   1=stade4" "Metastases versus no Metastasis 0=no 1=stade4ou4s" "DNA_INDEX        MD = missing data  " "LDH RESULT      MD = missing data " "LDH UPPER_LIMIT MD = missing data" "RECHUTE ou PROGRESSION Oui = 1
+Non = 0" "Date_de_Rechute_ou_ Progression" "Rechute METASTASE Oui = 1
+Non = 0
+ND = 9" "Rechute_LOCAL Oui = 1
+Non = 0
+loc + met = 2
+ND = 9" "Remission complete Oui = 1
+Non = 0
+ND = 9" "###############################################################################################################################################################################################################################################################" "VAMP" "Nbtype_arrayCGH   1=numerique   2=segmentaire sans numerique                 3=segmentaire avec amplif MYCN   4=numerique et segmentaire             5=amplif MYCN et numerique" "NB_aCGH_3groupes" "DELETION 1p    0=pas de deletion  1=deletion      9=NI" " GAIN 2p            0=pas de gain  1=gain  3=amplicon MYCN 9=NI" "DELETION  3p     0=pas de deletion  1=deletion        9=NI" "DELETION  4p     0=pas de deletion  1=deletion       9=NI" "DELETION  11q     0=pas de deletion  1=deletion    9=NI" " GAIN 17q            0=pas de gain 17q  1=gain  17q      9=NI" "Number of chromosome breakpoints" "ID Affymetrix" "VAMP" "AgeAtdiagnosis (months)" "EFS" "EFSm" "OS" "Osm" "clinical.id"
+300 "05-4491" NA "17/02/2004" 1 "Nantes CHU" "NR" "IJL/GS" "NBL-HR-2001" "06/07/2005" "03/05/2006" "0" 1 NA 0 9 8 8 8 8 8 8 8 8 8 8 NA NA NA NA NA NA 0 NA NA NA NA "5" "NB256_2.6433" 5 3 "1" "3" "0" "0" "0" "1" "12" NA "NB256_2.6433" "16,83" 0 "10,03" 0 "10,03" "NB256_2.6433"

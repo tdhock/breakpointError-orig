@@ -58,26 +58,39 @@ error.colors <- c(breakpoint=signal.colors[["latent"]],
                   annotation=breakpoint.colors[["1breakpoint"]])
 library(ggplot2)
 library(grid)
+blank.df <- points.df
+blank.df$what <- "negative"
+what <- function(df){
+  df$what <- factor(df$what, c("signal","negative","cost"))
+  df
+}
 p <- ggplot()+
-  geom_tallrect(aes(xmin=min,xmax=max,fill=annotation),
-                data=regions.df)+
-  geom_tallrect(aes(xmin=min,xmax=max),
-                color="grey",
-                fill=NA,
-                data=regions.df)+
-  geom_point(aes(locations,signal),pch=21,data=points.df)+
+  geom_rect(aes(
+    xmin=min,xmax=max,
+    ymin=-Inf, ymax=Inf,
+    fill=annotation),
+    data=what(regions.df))+
+  geom_rect(aes(
+    xmin=min,xmax=max,
+    ymin=-Inf, ymax=Inf),
+    color="grey",
+    fill=NA,
+    data=what(regions.df))+
+  geom_point(aes(locations,signal),pch=21,data=what(points.df))+
+  geom_blank(aes(locations,signal),data=what(blank.df))+
   geom_line(aes(locations,mu),lwd=2,
-            colour=signal.colors["latent"],data=points.df)+
+            colour=signal.colors["latent"],data=what(points.df))+
   geom_line(aes(base,cost,group=error,colour=error,size=error),
-            data=cost.df)+
+            data=what(cost.df))+
   facet_grid(what~bases.per.probe,scales="free",
-             labeller=function(var,val){
-               if(var=="bases.per.probe"){
+             labeller=function(df){
+               val <- df[,1]
+               list(if(names(df)=="bases.per.probe"){
                  sprintf("bases/probe = %s",val)
                }else{
                  as.character(val)
-               }
-               })+
+               })
+             })+
   theme_bw()+
   theme(panel.margin=unit(0,"lines"))+
   xlab("position in base pairs")+

@@ -8,8 +8,9 @@ source("scripts/signal.colors.R")
 p <- ggplot(signal.df,aes(locations,signal))+
   geom_point(pch=21)+
   geom_line(aes(y=mu),colour=signal.colors["latent"],lwd=1.1)+
-  facet_grid(length~.,
-             labeller=function(var,val)sprintf("length = %s",val))+
+  facet_grid(
+    length~.,
+    labeller=as_labeller(function(val)sprintf("length = %s",val)))+
   xlab("position in base pairs")
 print(p)
 

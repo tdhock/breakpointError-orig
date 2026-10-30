@@ -1,0 +1,208 @@
+** 30 Oct 2026
+
+Steps for reproducibility, JRepStat submission.
+
+Downloaded source package from R-Forge, http://download.r-forge.r-project.org/src/contrib/breakpointError_2016.10.25.tar.gz
+Local copy here, [[file:breakpointError_2016.10.25.tar.gz]]
+
+R CMD INSTALL works still works in R-4.6.2!
+
+#+begin_src 
+(base) hoct2726@dinf-thock-02i:~/projects/breakpointError-orig[JRepStat]$ R CMD INSTALL breakpointError_2016.10.25.tar.gz 
+* installing to library ‘/home/local/USHERBROOKE/hoct2726/lib/R/library’
+* installing *source* package ‘breakpointError’ ...
+** this is package ‘breakpointError’ version ‘2016.10.25’
+** using staged installation
+** libs
+using C compiler: ‘gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0’
+gcc -std=gnu2x -I"/home/local/USHERBROOKE/hoct2726/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -std=gnu99 -c breakpointError.c -o breakpointError.o
+gcc -std=gnu2x -I"/home/local/USHERBROOKE/hoct2726/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -std=gnu99 -c interface.c -o interface.o
+gcc -std=gnu2x -shared -L/home/local/USHERBROOKE/hoct2726/lib/R/lib -L/usr/local/lib -o breakpointError.so breakpointError.o interface.o -L/home/local/USHERBROOKE/hoct2726/lib/R/lib -lR
+installing to /home/local/USHERBROOKE/hoct2726/lib/R/library/00LOCK-breakpointError/00new/breakpointError/libs
+** R
+** inst
+** byte-compile and prepare package for lazy loading
+** help
+*** installing help indices
+** building package indices
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+** checking absolute paths in shared objects and dynamic libraries
+** testing if installed package can be loaded from final location
+** testing if installed package keeps a record of temporary installation path
+* DONE (breakpointError)
+#+end_src
+
+[[file:HOCKING-breakpointError.tex]] is the latex source.
+The git repo does not contain any figure files, only R source code.
+
+Looking in latex source to get figure file names, looking in R code to find corresponding R source code.
+
+R code says Segmentor3IsBack 1.8 was used, so downloaded it from CRAN Archive, but it does not compile:
+
+#+begin_src
+(base) hoct2726@dinf-thock-02i:~/projects/breakpointError-orig[JRepStat*]$ wget https://cloud.r-project.org/src/contrib/Archive/Segmentor3IsBack/Segmentor3IsBack_1.8.tar.gz
+…
+(base) hoct2726@dinf-thock-02i:~/projects/breakpointError-orig[JRepStat*]$ R CMD INSTALL Segmentor3IsBack_1.8.tar.gz 
+* installing to library ‘/home/local/USHERBROOKE/hoct2726/lib/R/library’
+* installing *source* package ‘Segmentor3IsBack’ ...
+** this is package ‘Segmentor3IsBack’ version ‘1.8’
+** package ‘Segmentor3IsBack’ successfully unpacked and MD5 sums checked
+** using staged installation
+** libs
+using C++ compiler: ‘g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0’
+g++ -std=gnu++20 -I"/home/local/USHERBROOKE/hoct2726/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -g -O2   -c BinNegative.cpp -o BinNegative.o
+In file included from BinNegative.h:5,
+                 from BinNegative.cpp:2:
+Function.h: In member function ‘SumOfFunctions<FunctionTypeName, AtomicSetElementTypeName, DataTypeName, SetTypeName>& SumOfFunctions<FunctionTypeName, AtomicSetElementTypeName, DataTypeName, SetTypeName>::operator=(SumOfFunctions<FunctionTypeName, AtomicSetElementTypeName, DataTypeName, SetTypeName>&)’:
+Function.h:110:5: error: return-statement with no value, in function returning ‘SumOfFunctions<FunctionTypeName, AtomicSetElementTypeName, DataTypeName, SetTypeName>&’ [-fpermissive]
+  110 |     return;
+      |     ^~~~~~
+make: *** [/home/local/USHERBROOKE/hoct2726/lib/R/etc/Makeconf:199: BinNegative.o] Error 1
+ERROR: compilation failed for package ‘Segmentor3IsBack’
+* removing ‘/home/local/USHERBROOKE/hoct2726/lib/R/library/Segmentor3IsBack’
+#+end_src
+
+version 2.0 in the Archive did compile:
+
+#+begin_src
+(base) hoct2726@dinf-thock-02i:~/projects/breakpointError-orig[JRepStat*]$ wget https://cloud.r-project.org/src/contrib/Archive/Segmentor3IsBack/Segmentor3IsBack_2.0.tar.gz
+…
+(base) hoct2726@dinf-thock-02i:~/projects/breakpointError-orig[JRepStat*]$ R CMD INSTALL Segmentor3IsBack_2.0.tar.gz 
+* installing to library ‘/home/local/USHERBROOKE/hoct2726/lib/R/library’
+* installing *source* package ‘Segmentor3IsBack’ ...
+** this is package ‘Segmentor3IsBack’ version ‘2.0’
+** package ‘Segmentor3IsBack’ successfully unpacked and MD5 sums checked
+** using staged installation
+** libs
+using C++ compiler: ‘g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0’
+g++ -std=gnu++20 -I"/home/local/USHERBROOKE/hoct2726/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -g -O2   -c BinNegative.cpp -o BinNegative.o
+g++ -std=gnu++20 -I"/home/local/USHERBROOKE/hoct2726/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -g -O2   -c CallSegmentor.cpp -o CallSegmentor.o
+g++ -std=gnu++20 -I"/home/local/USHERBROOKE/hoct2726/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -g -O2   -c Exp.cpp -o Exp.o
+g++ -std=gnu++20 -I"/home/local/USHERBROOKE/hoct2726/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -g -O2   -c Function.cpp -o Function.o
+g++ -std=gnu++20 -I"/home/local/USHERBROOKE/hoct2726/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -g -O2   -c GeneralFunctions.cpp -o GeneralFunctions.o
+g++ -std=gnu++20 -I"/home/local/USHERBROOKE/hoct2726/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -g -O2   -c MyVector.cpp -o MyVector.o
+g++ -std=gnu++20 -I"/home/local/USHERBROOKE/hoct2726/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -g -O2   -c Observations.cpp -o Observations.o
+g++ -std=gnu++20 -I"/home/local/USHERBROOKE/hoct2726/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -g -O2   -c Poisson.cpp -o Poisson.o
+g++ -std=gnu++20 -I"/home/local/USHERBROOKE/hoct2726/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -g -O2   -c PrunedSeg.cc -o PrunedSeg.o
+g++ -std=gnu++20 -I"/home/local/USHERBROOKE/hoct2726/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -g -O2   -c Segment.cpp -o Segment.o
+g++ -std=gnu++20 -I"/home/local/USHERBROOKE/hoct2726/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -g -O2   -c Segmentor.cpp -o Segmentor.o
+g++ -std=gnu++20 -I"/home/local/USHERBROOKE/hoct2726/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -g -O2   -c Sets.cpp -o Sets.o
+g++ -std=gnu++20 -I"/home/local/USHERBROOKE/hoct2726/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -g -O2   -c Trinome.cpp -o Trinome.o
+g++ -std=gnu++20 -I"/home/local/USHERBROOKE/hoct2726/lib/R/include" -DNDEBUG   -I/usr/local/include    -fpic  -g -O2   -c Variance.cpp -o Variance.o
+g++ -std=gnu++20 -shared -L/home/local/USHERBROOKE/hoct2726/lib/R/lib -L/usr/local/lib -o Segmentor3IsBack.so BinNegative.o CallSegmentor.o Exp.o Function.o GeneralFunctions.o MyVector.o Observations.o Poisson.o PrunedSeg.o Segment.o Segmentor.o Sets.o Trinome.o Variance.o -L/home/local/USHERBROOKE/hoct2726/lib/R/lib -lR
+installing to /home/local/USHERBROOKE/hoct2726/lib/R/library/00LOCK-Segmentor3IsBack/00new/Segmentor3IsBack/libs
+** R
+** byte-compile and prepare package for lazy loading
+** help
+*** installing help indices
+** building package indices
+** testing if installed package can be loaded from temporary location
+** checking absolute paths in shared objects and dynamic libraries
+** testing if installed package can be loaded from final location
+** testing if installed package keeps a record of temporary installation path
+* DONE (Segmentor3IsBack)
+#+end_src
+
+- some figure files =source()= R code under scripts/ which is absent from git repo.
+  - this content was also in my PHD thesis, Reproducible link on https://tdhock.github.io/publications/ is https://rcdata.nau.edu/genomic-ml/public_html/papers/2012-11-20-PhD-thesis/HOCKING-phd-thesis.tgz which has scripts directory.
+  - cp -r ~/Downloads/HOCKING-phd-thesis/scripts/ .
+  - same for data files,
+  - cp ~/Downloads/HOCKING-phd-thesis/data/* data/
+- [[file:figure-motivation.R]]
+  - different change-points, add RNGversion()
+  - Fig1 figure-motivation.pdf
+  - Fig2 figure-motivation-modelOnly.pdf
+  - Fig3 figure-motivation-breaksOnly.pdf
+  - Fig4 figure-motivation-breakpointError.tex
+  - error because new changepoint 2.3 has different API from old changepoint 1.1.1. try to download and install old version, yes installs.
+    #+begin_src
+      Error in multiple.mean.norm(data, mul.method = method, penalty, pen.value,  (from figure-motivation.R#63) : 
+        MBIC penalty not implemented for SegNeigh method, please choose an alternative penalty
+    #+end_src
+  - after that, error from ggplot2 4.0.3 =Error in labeller(col_vars) (from figure-motivation.R#172) : argument "val" is missing, with no default=
+  - try installing old ggplot2 0.9.2 (2012-09-04), yes installs.
+  - but different error,
+    #+begin_src
+      Error in structure(NULL, class = "waiver") (from figure-motivation.R#156) : 
+        attempt to set an attribute on NULL
+    #+end_src
+  - this error is because this used to be allowed in base R 3.1.0, but it is no longer allowed. The R NEWS file says this was deprecated in 3.4.0.
+  - solution is either downgrade R or upgrade ggplot2.
+  - R-3.4.0 was released in April 2017. Trying ggplot2 released around then.
+  - ggplot2_2.2.1.tar.gz    2016-12-30 21:45  2.1M  need to install lazyeval, same error set attr on NULL.
+  - ggplot2_3.0.0.tar.gz    2018-07-03 17:20  2.7M, install fails, invalid non-character version specification 'x' (type: double)
+  - Attempt to install old R? does not compile with --enable-R-shlib, make clean, make.
+  #+begin_src
+    gcc -Wl,--export-dynamic -fopenmp   -L/usr/local/lib64 -o R.bin Rmain.o CommandLineArgs.o Rdynload.o Renviron.o RNG.o agrep.o apply.o arithmetic.o array.o attrib.o bind.o builtin.o character.o coerce.o colors.o complex.o connections.o context.o cum.o dcf.o datetime.o debug.o deparse.o devices.o dotcode.o dounzip.o dstruct.o duplicate.o edit.o engine.o envir.o errors.o eval.o format.o gevents.o gram.o gram-ex.o graphics.o grep.o identical.o inlined.o inspect.o internet.o iosupport.o lapack.o list.o localecharset.o logic.o main.o mapply.o match.o memory.o names.o objects.o options.o paste.o platform.o plot.o plot3d.o plotmath.o print.o printarray.o printvector.o printutils.o qsort.o random.o raw.o registration.o relop.o rlocale.o saveload.o scan.o seq.o serialize.o sort.o source.o split.o sprintf.o startup.o subassign.o subscript.o subset.o summary.o sysutils.o times.o unique.o util.o version.o vfonts.o xxxpr.o   `ls ../unix/*.o ../appl/*.o ../nmath/*.o` ../extra/zlib/libz.a ../extra/bzip2/libbz2.a ../extra/pcre/libpcre.a ../extra/tre/libtre.a     -lblas -lgfortran -lm -lquadmath   -lreadline  -llzma -ltirpc -lrt -ldl -lm -licuuc -licui18n
+      /usr/bin/ld: ../unix/sys-unix.o:/home/local/USHERBROOKE/hoct2726/R/R-3.1.0/src/unix/sys-unix.c:407: multiple definition of `ptr_R_ProcessEvents'; ../unix/system.o:/home/local/USHERBROOKE/hoct2726/R/R-3.1.0/src/unix/../../src/include/Rinterface.h:129: first defined here
+  #+end_src
+  - Attempt newer ggplot2? 3.5.0 from Feb 2024 instalss but running gives error, argument val is missing.
+  - Need to upgrade figure code. ggplot2 2.2.0 news says: On the programming side, the labeller API has been rewritten in order to offer more control when faceting over multiple factors (e.g. with formulae such as ~cyl + am). This also means that if you have written custom labellers, you will need to update them for this version of ggplot.
+    Previously, a labeller function would take variable and value arguments and return a character vector. Now, they take a data frame of character vectors and return a list. The input data frame has one column per factor facetted over and each column in the returned list becomes one line in the strip label. See documentation for more details.
+    The labels received by a labeller now contain metadata: their margin (in the "type" attribute) and whether they come from a wrap or a grid facet (in the "facet" attribute).
+    Note that the new as_labeller() function operator provides an easy way to transform an existing function to a labeller function. The existing function just needs to take and return a character vector.
+  - use =as_labeller()= as documented in ggplot2 NEWS.
+  - [[file:figure-breakpoint-error-pieces.R]]
+    - Fig5 figure-breakpoint-error-pieces.tex
+  - [[file:figure-variable-density-signals.R]]
+    - Fig6 figure-variable-density-signals.png
+  - [[file:figure-variable-density-berr.R]]
+    - Fig7 figure-variable-density-berr-k.tex
+    - Fig8 figure-variable-density-berr.tex
+  - [[file:figure-variable-density-error-train.R]]
+    - Fig9 figure-variable-density-error-train.tex
+    - differences in min values, argmin same.
+    - [[file:data/variable.density.signals.R]]
+    - install flsa from CRAN, add RNGversion(), replicated.
+  - [[file:figure-variable-density-error-alpha.R]]
+    - Fig10 figure-variable-density-error-alpha.tex
+  - [[file:figure-variable-breaks-constant-size.R]]
+    - Fig11 figure-variable-breaks-constant-size.pdf
+  - [[file:figure-variable-breaks-constant-size-berr.R]]
+    - Fig12 figure-variable-breaks-constant-size-berr.tex
+    - changed labeller to return list.
+  - [[file:figure-variable-breaks-constant-size-alpha.R]]
+    - Fig13 figure-variable-breaks-constant-size-alpha.tex
+  - [[file:figure-variable-size-signals.R]]
+    - Fig14 figure-variable-size-signals.png
+  - [[file:figure-variable-size-error-alpha-beta.R]]
+    - Fig15 figure-variable-size-error-alpha-beta.pdf
+    - [[file:data/variable.size.alpha.beta.R]]
+    - Error in train$lambda.star(a, b) (from variable.size.alpha.beta.R#2) : unused argument (b)
+    - remove b argument from call, did not work.
+    - restore R code from git.
+    - [[file:data/variable.size.signals.R]]
+    - Error in library(inline) (from precise.breakpoint.cost.R#1) : there is no package called ‘inline’, so install it.
+    - source("data/precise.breakpoint.cost.R"), unable to load shared object '/tmp/RtmpbAe3LG/file3dc21925d5c7.so': /tmp/RtmpbAe3LG/file3dc21925d5c7.so: undefined symbol: length
+    - use breakpointError package instead, works.
+    - there is no package called ‘cghseg’, Install 0.0.1 from CRAN Archive, works.
+  - [[file:figure-variable-density-signals.R]]
+    - Fig16 figure-variable-density-signals.png
+  - [[file:figure-variable-density-berr-flsa.R]]
+    - Fig17 figure-variable-density-berr-flsa.tex
+  - [[file:figure-variable-density-error-alpha-flsa.R]]
+    - Fig18 figure-variable-density-error-alpha-flsa.tex
+  - [[file:figure-variable-density-annotation-cost.R]]
+    - Fig19 figure-variable-density-annotation-cost.png
+    - need to make panel variable factor to specify facet order.
+  - [[file:figure-variable-density-sigerr.R]]
+    - change levels() to unique() since R now does characters instead of factors by default in data frames.
+    - set factor with levels to get same facet order.
+    - Fig20 figure-variable-density-sigerr-small.tex
+    - Fig21 figure-variable-density-sigerr.tex
+  - [[file:table-penalty-real-data.R]]
+    - install bams from CRAN Archive
+
+*** Summary table of issues and solutions
+
+Overall there were six distinct combinations of issues and solutions that I encountered while doing the replication analysis.
+
+| issue                                                    | examples                       | cause                              | solution                               |
+|----------------------------------------------------------+--------------------------------+------------------------------------+----------------------------------------|
+| package removed from CRAN                                | Segmentor3IsBack, bams, cghseg | Package no longer maintained       | use old version from CRAN Archive      |
+| original code errors using new version                   | changepoint                    | API change                         | use old version from CRAN Archive      |
+| original code errors using new version                   | ggplot2                        | API change                         | write code compatible with new version |
+| old version did not install                              | R, Segmentor3IsBack            | new compilers                      | use more recent version                |
+| results qualitatively consistent,  but numbers different | several figures                | R random number generator changed  | =RNGversion("3.1.0")=                  |
+| different figure details                                 | facet order, missing data      | R stringsAsFactors default changed | new code to specify factor levels      |

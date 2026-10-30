@@ -11,9 +11,9 @@ lerr.df <- do.call(rbind,lapply(show,function(sig){
   }))
 }))
 library(ggplot2)
-labeller <- function(var,val){
-  var <- ifelse(var=="alpha","\\beta","\\textrm{length}")
-  sprintf("$%s = %s$",var,val)
+labeller <- function(df){
+  var <- ifelse(names(df)=="alpha","\\beta","\\textrm{length}")
+  list(sprintf("$%s = %s$",var,df[,1]))
 }
 p <- ggplot(lerr.df,aes(log10(lambda),error))+
   geom_line()+

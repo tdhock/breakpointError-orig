@@ -4,9 +4,11 @@ works_with_R("3.1.0",
              directlabels="2014.4.25",
              breakpointError="1.0",
              Segmentor3IsBack="1.8",
-             "tdhock/ggplot2@98cefe4d653ce8f214177b66dc030c2f3c725ffb",
+             proto="1.0.0",
+             lazyeval="0.2.3",
+             ggplot2="2.2.1",
              changepoint="1.1.1")
-
+RNGversion("3.1.0")
 set.seed(5)
 
 params <-
@@ -167,9 +169,9 @@ p <- ggplot(match.err, aes(segments,error))+
   scale_linetype_manual(values=fp.fn.linetypes)+
   scale_colour_manual(values=fp.fn.colors)+
   scale_size_manual(values=fp.fn.sizes)+
-  facet_grid(. ~ change.param, labeller=function(var, val){
+  facet_grid(. ~ change.param, labeller=as_labeller(function(val){
     ifelse(val=="mean", "change in mean", "change in variance")
-  })+
+  }))+
   theme_bw()+
   theme(panel.margin=grid::unit(0, "cm"))+
   xlim(1-space, 5+space)
