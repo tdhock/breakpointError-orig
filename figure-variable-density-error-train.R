@@ -27,8 +27,9 @@ p <- ggplot(,aes(log10(lambda),error))+
                colour=opt.color)+
   geom_text(aes(text.at,label=round(error,1),hjust=hjust,vjust=vjust),
             data=opt.err,colour=opt.color)+
-  facet_grid(.~alpha,
-             labeller=function(var,val)sprintf("$\\alpha = %s$",val))+
+  facet_grid(
+    .~alpha,
+    labeller=as_labeller(function(val)sprintf("$\\alpha = %s$",val)))+
   xlab("model complexity tradeoff parameter $\\log_{10}(\\lambda)$")+
   ylab("error $E^\\alpha(\\lambda)$")
 ##pdf("figure-variable-density-error-train.pdf",h=2)

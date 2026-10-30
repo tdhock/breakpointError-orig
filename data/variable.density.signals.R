@@ -89,7 +89,8 @@ sample.signal <- function(d){
   }
   result
 }
-  
+
+RNGversion("3.1.0")
 set.seed(1)
 seg.size <- 10000
 means <- c(-3,0,3,0,2,-1,3)/3

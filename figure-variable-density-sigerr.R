@@ -90,7 +90,7 @@ err.df <- do.call(rbind,lapply(variable.density.show,function(sig){
 }))
 
 ## The order here specifies the plotting order!
-curves <- levels(err.df$error)
+curves <- unique(err.df$error)
 sort.order <- rep(0,length(curves))
 names(sort.order) <- curves
 sort.order[curves == "$E$"] <- 1
@@ -111,84 +111,81 @@ fp.fn.sizes[annNames] <- fp.fn.sizes[names(annNames)]
 fp.fn.linetypes[annNames] <- fp.fn.linetypes[names(annNames)]
 
 plotCurves <- function(err.df){
-
-## just to adjust the axes:
-levs <- as.character(unique(err.df$type))
-levs <- levs[levs!="Signal"]
-
-makeBlank <- function(fun,ydiff){
-  with(subset(err.df,cost==fun(cost))[1,],{
-    data.frame(bases.per.probe,segments,cost=cost+ydiff,
-               type=levs)
+  ## just to adjust the axes:
+  levs <- as.character(unique(err.df$type))
+  levs <- levs[levs!="Signal"]
+  makeBlank <- function(fun,ydiff){
+    with(subset(err.df,cost==fun(cost))[1,],{
+      data.frame(bases.per.probe,segments,cost=cost+ydiff,
+                 type=levs)
+    })
+  }
+  sig.df <- subset(err.df,type=="Signal")
+  sig.blank <- if(nrow(sig.df)==0)data.frame() else with(sig.df,{
+    data.frame(bases.per.probe,segments,cost=max(cost)+0.5,type)
   })
-}
-sig.df <- subset(err.df,type=="Signal")
-sig.blank <- if(nrow(sig.df)==0)data.frame() else with(sig.df,{
-  data.frame(bases.per.probe,segments,cost=max(cost)+0.5,type)
-})
-blank <- rbind(makeBlank(max,2),
-               makeBlank(min,-1),
-               sig.blank)
-adj <- 0.1
-latex.boxes <- function(d,...){
-  d <- calc.boxes(d)
-  ## expand hat box size:
-  frac <- ifelse(grepl("hat",d$label),0.7,0.3)
-  d$top <- d$top + d$h * frac
-  d
-}
-  
-alter <- function(pre,xdiff){
-  force(xdiff)
-  list(sprintf("%s.points",pre),
-       function(d,...){
-         d$x <- d$x+xdiff
-         d
-       },
-       latex.boxes,
-       qp.labels("y","bottom","top",
-                 make.tiebreaker("x","y"),
-                 limits=ylimits)
-       ##,latex.boxes,draw.rects
-       )
-}
-mymethod <- dl.combine(alter("first",-adj),alter("last",adj))
-
-
-library(plyr)
-min.df <- ddply(subset(err.df,error=="$E$"),
-                .(bases.per.probe,type),subset,
-                cost==min(cost))
-                
-library(grid)
-ggplot(err.df,aes(segments,cost))+
-  geom_blank(data=blank)+
-  geom_line(aes(colour=error,size=error,linetype=error))+
-  geom_point(pch=1,data=min.df)+
-  facet_grid(type~bases.per.probe,scales="free",
-             labeller=function(var,val){
-               vname <- if(var=="bases.per.probe"){
-                 "bases/probe = "
-               }else{
-                 ""
-               }
-               sprintf("%s%s",vname,val)
+  blank <- rbind(makeBlank(max,2),
+                 makeBlank(min,-1),
+                 sig.blank)
+  blank$type <- factor(blank$type, levels(err.df$type))
+  adj <- 0.1
+  latex.boxes <- function(d,...){
+    d <- calc.boxes(d)
+    ## expand hat box size:
+    frac <- ifelse(grepl("hat",d$label),0.7,0.3)
+    d$top <- d$top + d$h * frac
+    d
+  }  
+  alter <- function(pre,xdiff){
+    force(xdiff)
+    list(sprintf("%s.points",pre),
+         function(d,...){
+           d$x <- d$x+xdiff
+           d
+         },
+         latex.boxes,
+         qp.labels("y","bottom","top",
+                   make.tiebreaker("x","y"),
+                   limits=ylimits)
+         ##,latex.boxes,draw.rects
+         )
+  }
+  mymethod <- dl.combine(alter("first",-adj),alter("last",adj))
+  library(plyr)
+  min.df <- ddply(subset(err.df,error=="$E$"),
+                  .(bases.per.probe,type),subset,
+                  cost==min(cost))  
+  library(grid)
+  ggplot(err.df,aes(segments,cost))+
+    geom_blank(data=blank)+
+    geom_line(aes(colour=error,size=error,linetype=error))+
+    geom_point(pch=1,data=min.df)+
+    facet_grid(type~bases.per.probe,scales="free",
+               labeller=function(df){
+                 val <- df[,1]
+                 vname <- if(names(df)=="bases.per.probe"){
+                   "bases/probe = "
+                 }else{
+                   ""
+                 }
+                 list(sprintf("%s%s",vname,val))
                })+
-  ##theme(title="Model selection error curves for 2 simulated signals")+
-  scale_linetype_manual(values=fp.fn.linetypes)+
-  scale_colour_manual(values=fp.fn.colors)+
-  scale_size_manual(values=fp.fn.sizes)+
-  geom_dl(aes(label=error,colour=error),method=mymethod)+
-  guides(colour="none",linetype="none",size="none")+
-  scale_x_continuous("segments $k$ of estimated signal",
-                     limits=c(-1,22),breaks=c(1,5,7,20),
-                     minor_breaks=NULL)+
-  scale_y_continuous("error",minor_breaks=NULL)+
-  theme_bw()+theme(panel.margin=unit(0,"lines"))
+    ##theme(title="Model selection error curves for 2 simulated signals")+
+    scale_linetype_manual(values=fp.fn.linetypes)+
+    scale_colour_manual(values=fp.fn.colors)+
+    scale_size_manual(values=fp.fn.sizes)+
+    geom_dl(aes(label=error,colour=error),method=mymethod)+
+    guides(colour="none",linetype="none",size="none")+
+    scale_x_continuous("segments $k$ of estimated signal",
+                       limits=c(-1,22),breaks=c(1,5,7,20),
+                       minor_breaks=NULL)+
+    scale_y_continuous("error",minor_breaks=NULL)+
+    theme_bw()+theme(panel.margin=unit(0,"lines"))
 }
 
-full.df <-
-  subset(err.df,type%in%c("Zero-one","Complete","Incomplete","Positive"))
+full.levs <- c("Complete","Zero-one","Incomplete","Positive")
+full.df <- subset(err.df,type%in%full.levs)
+full.df$type <- factor(full.df$type,full.levs)
 kplot <- plotCurves(full.df)
 
 library(tikzDevice);options(tikzDocumentDeclaration="\\documentclass[11pt]{memoir}",tikzMetricsDictionary="tikzMetrics")
@@ -197,11 +194,11 @@ options(tikzMetricPackages=c("\\usepackage[T1]{fontenc}\n",
           "\\usepackage{amsmath}\n"))
 print(getOption("tikzMetricPackages"))
 
-tikz("figure-variable-density-sigerr.tex",5,4)
+tikz("figure-variable-density-sigerr.tex",width=5,height=4)
 print(kplot)
 dev.off()
 
-tikz("figure-variable-density-sigerr-small.tex",5,3.2)
+tikz("figure-variable-density-sigerr-small.tex",width=5,height=3.2)
 small.df <- subset(err.df,type%in%c("Signal","Breakpoint","Complete"))
 small.df$type <- as.character(small.df$type)
 small.df$type <- factor(small.df$type,c("Signal","Breakpoint","Complete"),

@@ -24,12 +24,16 @@ p <- ggplot(stat.df,aes(alpha,mean,group=beta))+
   theme(panel.margin=grid::unit(0, "cm"))
 ##print(p)
 
+what <- function(df){
+  df$what <- factor(df$what, c("train","test"))
+  df
+}
 p <- 
 ggplot()+
   coord_equal()+
   xlab("beta (exponent of signal length in bases)")+
   ylab("alpha (exponent of number of data points)")+
-  geom_tile(aes(alpha,beta,fill=mean.norm),data=stat.df)+
+  geom_tile(aes(alpha,beta,fill=mean.norm),data=what(stat.df))+
   ## stat_contour(aes(alpha,beta,z=mean.norm),
   ##              data=stat.df,
   ##              breaks=seq(0, 0.2, by=0.05),
@@ -37,7 +41,7 @@ ggplot()+
   scale_color_manual(values=c(minimum="red", expected="white"))+
   scale_shape_manual(values=c(minimum=20, expected=1))+
   geom_point(aes(alpha,beta,shape=value, color=value),
-             data=data.frame(min.df, value="minimum"))+
+             data=what(data.frame(min.df, value="minimum")))+
   geom_point(aes(alpha,beta, shape=value, color=value),
              data=data.frame(alpha=-0.5,beta=0.5, value="expected"))+
   ## geom_dl(aes(alpha,beta,z=mean.norm,label=..level..),

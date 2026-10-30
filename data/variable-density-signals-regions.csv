@@ -1,0 +1,16 @@
+user_id,profile_id,chromosome,min,max,type,annotation
+1,610,6,39387,40705,breakpoints,1breakpoint
+1,610,6,49657,50400,breakpoints,1breakpoint
+1,610,6,59767,60668,breakpoints,1breakpoint
+1,610,1,1,14018,breakpoints,1breakpoint
+1,610,1,41024,54011,breakpoints,1breakpoint
+1,610,1,56039,62941,breakpoints,1breakpoint
+1,610,2,17906,24257,breakpoints,1breakpoint
+1,610,2,7044,13672,breakpoints,1breakpoint
+1,610,2,29080,35188,breakpoints,1breakpoint
+1,610,2,36264,44523,breakpoints,1breakpoint
+1,610,2,45842,55420,breakpoints,1breakpoint
+1,610,2,58196,65206,breakpoints,1breakpoint
+1,610,6,9801,10485,breakpoints,1breakpoint
+1,610,6,19723,20448,breakpoints,1breakpoint
+1,610,6,29663,30169,breakpoints,1breakpoint

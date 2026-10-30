@@ -1,0 +1,13 @@
+*~
+*.aux
+*.bbl
+*.blg
+*.log
+*.toc
+/berr/
+*.bak
+*.RData
+/library/
+auto
+/tikzMetrics
+.svn

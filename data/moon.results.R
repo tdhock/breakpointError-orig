@@ -1,0 +1,7 @@
+library(clusterpath) 
+##results <- lapply(5:10,halfmoon.cluster,clusterings=all.clusterings["spectral clusterpath"!=sapply(all.clusterings,"[[",1)])
+##results <- lapply(2,halfmoon.cluster,clusterings=all.clusterings[!grepl("clusterpath",sapply(all.clusterings,"[[",1))])
+##results <- lapply(1,halfmoon.cluster,clusterings=all.clusterings[sapply(all.clusterings,"[[",1)=="spectral exp kmeans manual"])
+results <- lapply(1:20,halfmoon.cluster)
+moon.results <- do.call(rbind,lapply(results,"[[",1))
+save(moon.results,file="data/moon.results.RData")

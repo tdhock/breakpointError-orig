@@ -7,8 +7,9 @@ source("scripts/signal.colors.R")
 p <- ggplot(signal.df,aes(locations,signal))+
   geom_point(pch=21)+
   geom_line(aes(y=mu),colour=signal.colors["latent"],lwd=2)+
-  facet_grid(bases.per.probe~.,
-             labeller=function(var,val)sprintf("bases/probe = %s",val))+
+  facet_grid(
+    bases.per.probe~.,
+    labeller=as_labeller(function(val)sprintf("bases/probe = %s",val)))+
   xlab("position in base pairs")+
   ylab("simulated copy number signal")+
   theme_grey()

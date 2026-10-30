@@ -21,8 +21,9 @@ names(sizes) <- names(bpp.colors) <- levels(lerr.df$bases.per.probe)
 p <- ggplot(lerr.df,aes(log10(lambda),error))+
   geom_line(aes(size=bases.per.probe,colour=bases.per.probe))+
   geom_point(aes(fill=bases.per.probe),pch=21,data=subset(lerr.df,optimal))+
-  facet_grid(.~alpha,
-             labeller=function(var,val)sprintf("$\\alpha = %s$",val))+
+  facet_grid(
+    .~alpha,
+    labeller=as_labeller(function(val)sprintf("$\\alpha = %s$",val)))+
   scale_size_manual(leg,values=sizes)+
   scale_fill_manual(leg,values=bpp.colors)+
   scale_color_manual(leg,values=bpp.colors)+
