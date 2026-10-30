@@ -196,7 +196,7 @@ installing to /home/local/USHERBROOKE/hoct2726/lib/R/library/00LOCK-Segmentor3Is
 
 *** Summary table of issues and solutions
 
-Overall there were six distinct combinations of issues and solutions.
+Overall there were six distinct combinations of issues and solutions that I encountered while doing the replication analysis.
 
 | issue                                                    | examples                       | cause                              | solution                               |
 |----------------------------------------------------------+--------------------------------+------------------------------------+----------------------------------------|
