@@ -196,12 +196,13 @@ installing to /home/local/USHERBROOKE/hoct2726/lib/R/library/00LOCK-Segmentor3Is
 
 *** Summary table of issues and solutions
 
-Overall there were five distinct combinations of issues and solutions.
+Overall there were six distinct combinations of issues and solutions.
 
-| issue                                                    | examples                  | cause                              | solution                               |
-|----------------------------------------------------------+---------------------------+------------------------------------+----------------------------------------|
-| old version did not install                              | R, Segmentor3IsBack       | new compilers                      | use more recent version                |
-| original code errors using new version                   | changepoint               | API change                         | downgrade to older version             |
-| original code errors using new version                   | ggplot2                   | API change                         | write code compatible with new version |
-| results qualitatively consistent,  but numbers different | several figures           | R random number generator changed  | =RNGversion("3.1.0")=                  |
-| different figure details                                 | facet order, missing data | R stringsAsFactors default changed | new code to specify factor levels      |
+| issue                                                    | examples                       | cause                              | solution                               |
+|----------------------------------------------------------+--------------------------------+------------------------------------+----------------------------------------|
+| package removed from CRAN                                | Segmentor3IsBack, bams, cghseg | Package no longer maintained       | use old version from CRAN Archive      |
+| old version did not install                              | R, Segmentor3IsBack            | new compilers                      | use more recent version                |
+| original code errors using new version                   | changepoint                    | API change                         | downgrade to older version             |
+| original code errors using new version                   | ggplot2                        | API change                         | write code compatible with new version |
+| results qualitatively consistent,  but numbers different | several figures                | R random number generator changed  | =RNGversion("3.1.0")=                  |
+| different figure details                                 | facet order, missing data      | R stringsAsFactors default changed | new code to specify factor levels      |
