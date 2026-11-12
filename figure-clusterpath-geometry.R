@@ -145,7 +145,7 @@ p4 <- p3+geom_point(data=allpts,pch=21,fill="white")+
  scale_x_continuous("",limits=c(-1.1,0.4),breaks=c(-10))+
  scale_y_continuous("",breaks=c(-10))+
   theme_bw()+
-  theme(panel.margin=unit(0,"lines"))
+  theme(panel.spacing=unit(0,"lines"))
 library(tikzDevice);options(tikzDocumentDeclaration="\\documentclass[11pt]{memoir}",tikzMetricsDictionary="tikzMetrics")
 tikz("figure-clusterpath-geometry.tex",height=3.2,width=6.5)
 print(p4)

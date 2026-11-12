@@ -107,7 +107,7 @@ p <- ggplot(roc,aes(FPR,TPR))+
                            sep=""),
                      breaks=seq(0.5,1,by=0.1))+
   theme_bw()+
-  theme(panel.margin=unit(0,"lines"))+
+  theme(panel.spacing=unit(0,"lines"))+
   scale_colour_manual(values=algo.colors,guide="none")
 
 ##pdf("figure-bams-roc.pdf",width=8.3,height=3.4)

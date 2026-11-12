@@ -1,7 +1,7 @@
 ## Show the annotations for 2 samples from the same signal.
 
 load("data/variable.density.show.RData")
-source("scripts/geom_tallrect.R")
+#source("scripts/geom_tallrect.R")
 source("scripts/breakpoint.colors.R")
 source("scripts/signal.colors.R")
 
@@ -92,7 +92,7 @@ p <- ggplot()+
                })
              })+
   theme_bw()+
-  theme(panel.margin=unit(0,"lines"))+
+  theme(panel.spacing=unit(0,"lines"))+
   xlab("position in base pairs")+
   scale_colour_manual("imprecision",values=error.colors)+
   scale_fill_manual(values=breakpoint.colors)+

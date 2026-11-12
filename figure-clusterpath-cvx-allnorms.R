@@ -30,7 +30,7 @@ p <- ggplot(cvx,aes(alpha.1,alpha.2))+
   ##geom_text(data=means,vjust=-0.5,label="$\\bar X$",col="grey")+
   geom_point(data=means,label="$\\bar X$",fill="grey",pch=21)+
   theme_bw()+
-  theme(panel.margin=unit(0,"lines"))
+  theme(panel.spacing=unit(0,"lines"))
 
 library(tikzDevice);options(tikzDocumentDeclaration="\\documentclass[11pt]{memoir}",tikzMetricsDictionary="tikzMetrics")
 tikz("figure-clusterpath-cvx-allnorms.tex",height=3,width=5.8)

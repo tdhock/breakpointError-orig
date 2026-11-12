@@ -115,6 +115,27 @@ installing to /home/local/USHERBROOKE/hoct2726/lib/R/library/00LOCK-Segmentor3Is
   - Fig2 figure-motivation-modelOnly.pdf
   - Fig3 figure-motivation-breaksOnly.pdf
   - Fig4 figure-motivation-breakpointError.tex
+  - error new ggplot2 api
+    #+begin_src
++ ggplot()+
++   geom_point(aes(base, signal), data=signals, pch=1)+
++   geom_vline(aes(xintercept=change.base+1/2,
++                color=mtype(model.type)),
++            data=matching$changes, show_guide=TRUE, linetype="dashed")+
++   scale_x_continuous("position",
++                      breaks=base.breaks)+
++   facet_grid(facet2 ~ facet)+
++   theme_bw()+
++   theme(panel.margin=grid::unit(0, "cm"))+
++   geom_vline(aes(xintercept=change.after+1/2, color=what),
++              data=changes, linetype="dashed")+
++   scale_y_continuous(breaks=seq(-4, 4, by=2))+
++   scale_fill_manual("breakpoints", values=model.colors, breaks=model.breaks)+
++   scale_color_manual("breakpoints", values=model.colors, breaks=model.breaks)
+Error:
+! The `show_guide` argument of `layer()` was deprecated in ggplot2 2.0.0 and is now defunct.
+ℹ Please use the `show.legend` argument instead.
+    #+end_src
   - error because new changepoint 2.3 has different API from old changepoint 1.1.1. try to download and install old version, yes installs.
     #+begin_src
       Error in multiple.mean.norm(data, mul.method = method, penalty, pen.value,  (from figure-motivation.R#63) : 
@@ -143,56 +164,57 @@ installing to /home/local/USHERBROOKE/hoct2726/lib/R/library/00LOCK-Segmentor3Is
     The labels received by a labeller now contain metadata: their margin (in the "type" attribute) and whether they come from a wrap or a grid facet (in the "facet" attribute).
     Note that the new as_labeller() function operator provides an easy way to transform an existing function to a labeller function. The existing function just needs to take and return a character vector.
   - use =as_labeller()= as documented in ggplot2 NEWS.
-  - [[file:figure-breakpoint-error-pieces.R]]
-    - Fig5 figure-breakpoint-error-pieces.tex
-  - [[file:figure-variable-density-signals.R]]
-    - Fig6 figure-variable-density-signals.png
-  - [[file:figure-variable-density-berr.R]]
-    - Fig7 figure-variable-density-berr-k.tex
-    - Fig8 figure-variable-density-berr.tex
-  - [[file:figure-variable-density-error-train.R]]
-    - Fig9 figure-variable-density-error-train.tex
-    - differences in min values, argmin same.
-    - [[file:data/variable.density.signals.R]]
-    - install flsa from CRAN, add RNGversion(), replicated.
-  - [[file:figure-variable-density-error-alpha.R]]
-    - Fig10 figure-variable-density-error-alpha.tex
-  - [[file:figure-variable-breaks-constant-size.R]]
-    - Fig11 figure-variable-breaks-constant-size.pdf
-  - [[file:figure-variable-breaks-constant-size-berr.R]]
-    - Fig12 figure-variable-breaks-constant-size-berr.tex
-    - changed labeller to return list.
-  - [[file:figure-variable-breaks-constant-size-alpha.R]]
-    - Fig13 figure-variable-breaks-constant-size-alpha.tex
-  - [[file:figure-variable-size-signals.R]]
-    - Fig14 figure-variable-size-signals.png
-  - [[file:figure-variable-size-error-alpha-beta.R]]
-    - Fig15 figure-variable-size-error-alpha-beta.pdf
-    - [[file:data/variable.size.alpha.beta.R]]
-    - Error in train$lambda.star(a, b) (from variable.size.alpha.beta.R#2) : unused argument (b)
-    - remove b argument from call, did not work.
-    - restore R code from git.
-    - [[file:data/variable.size.signals.R]]
-    - Error in library(inline) (from precise.breakpoint.cost.R#1) : there is no package called ‘inline’, so install it.
-    - source("data/precise.breakpoint.cost.R"), unable to load shared object '/tmp/RtmpbAe3LG/file3dc21925d5c7.so': /tmp/RtmpbAe3LG/file3dc21925d5c7.so: undefined symbol: length
-    - use breakpointError package instead, works.
-    - there is no package called ‘cghseg’, Install 0.0.1 from CRAN Archive, works.
-  - [[file:figure-variable-density-signals.R]]
-    - Fig16 figure-variable-density-signals.png
-  - [[file:figure-variable-density-berr-flsa.R]]
-    - Fig17 figure-variable-density-berr-flsa.tex
-  - [[file:figure-variable-density-error-alpha-flsa.R]]
-    - Fig18 figure-variable-density-error-alpha-flsa.tex
-  - [[file:figure-variable-density-annotation-cost.R]]
-    - Fig19 figure-variable-density-annotation-cost.png
-    - need to make panel variable factor to specify facet order.
-  - [[file:figure-variable-density-sigerr.R]]
-    - change levels() to unique() since R now does characters instead of factors by default in data frames.
-    - set factor with levels to get same facet order.
-    - Fig20 figure-variable-density-sigerr-small.tex
-    - Fig21 figure-variable-density-sigerr.tex
-  - [[file:table-penalty-real-data.R]]
-    - install bams from CRAN Archive
+- [[file:figure-breakpoint-error-pieces.R]]
+  - Fig5 figure-breakpoint-error-pieces.tex
+- [[file:figure-variable-density-signals.R]]
+  - Fig6 figure-variable-density-signals.png
+- [[file:figure-variable-density-berr.R]]
+  - Fig7 figure-variable-density-berr-k.tex
+  - Fig8 figure-variable-density-berr.tex
+- [[file:figure-variable-density-error-train.R]]
+  - Fig9 figure-variable-density-error-train.tex
+  - differences in min values, argmin same.
+  - [[file:data/variable.density.signals.R]]
+  - install flsa from CRAN, add RNGversion(), replicated.
+- [[file:figure-variable-density-error-alpha.R]]
+  - Fig10 figure-variable-density-error-alpha.tex
+- [[file:figure-variable-breaks-constant-size.R]]
+  - Fig11 figure-variable-breaks-constant-size.pdf
+- [[file:figure-variable-breaks-constant-size-berr.R]]
+  - Fig12 figure-variable-breaks-constant-size-berr.tex
+  - changed labeller to return list.
+- [[file:figure-variable-breaks-constant-size-alpha.R]]
+  - Fig13 figure-variable-breaks-constant-size-alpha.tex
+- [[file:figure-variable-size-signals.R]]
+  - Fig14 figure-variable-size-signals.png
+- [[file:figure-variable-size-error-alpha-beta.R]]
+  - Fig15 figure-variable-size-error-alpha-beta.pdf
+  - [[file:data/variable.size.alpha.beta.R]]
+  - Error in train$lambda.star(a, b) (from variable.size.alpha.beta.R#2) : unused argument (b)
+  - remove b argument from call, did not work.
+  - restore R code from git.
+  - [[file:data/variable.size.signals.R]]
+  - Error in library(inline) (from precise.breakpoint.cost.R#1) : there is no package called ‘inline’, so install it.
+  - source("data/precise.breakpoint.cost.R"), unable to load shared object '/tmp/RtmpbAe3LG/file3dc21925d5c7.so': /tmp/RtmpbAe3LG/file3dc21925d5c7.so: undefined symbol: length
+  - use breakpointError package instead, works.
+  - there is no package called ‘cghseg’, Install 0.0.1 from CRAN Archive, works.
+- [[file:figure-variable-density-signals.R]]
+  - Fig16 figure-variable-density-signals.png
+- [[file:figure-variable-density-berr-flsa.R]]
+  - Fig17 figure-variable-density-berr-flsa.tex
+- [[file:figure-variable-density-error-alpha-flsa.R]]
+  - Fig18 figure-variable-density-error-alpha-flsa.tex
+- [[file:figure-variable-density-annotation-cost.R]]
+  - Fig19 figure-variable-density-annotation-cost.png
+  - need to make panel variable factor to specify facet order.
+- [[file:figure-variable-density-sigerr.R]]
+  - change levels() to unique() since R now does characters instead of factors by default in data frames.
+  - set factor with levels to get same facet order.
+  - Fig20 figure-variable-density-sigerr-small.tex
+  - Fig21 figure-variable-density-sigerr.tex
+- [[file:table-penalty-real-data.R]]
+  - need data/all.stats.RData
+  - install bams from CRAN Archive
 
 *** Summary table of issues and solutions
 

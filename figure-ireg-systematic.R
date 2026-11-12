@@ -48,7 +48,7 @@ p <- ggplot()+
   facet_grid(profile.id~chromosome,scales="free",space="free_x",
              labeller=lfun)+
   theme_bw()+
-  theme(panel.margin=unit(0,"cm"))+
+  theme(panel.spacing=unit(0,"cm"))+
   scale_x_continuous("position on chromosome (mega base pairs)",
                      breaks=c(100,200))+
   scale_fill_manual(values=breakpoint.colors)+

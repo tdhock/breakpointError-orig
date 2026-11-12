@@ -1,7 +1,7 @@
 ## experiment: calculate the breakpoint error and show the curve that
 ## demonstrates what exponent we need to pick for the number of points.
-
-source("data/precise.breakpoint.cost.R")
+library(breakpointError)
+##source("data/precise.breakpoint.cost.R")
 source("data/run.cghseg.R")
 library(flsa)
 
@@ -14,7 +14,7 @@ sample.signal <- function(d){
   result$bases.per.probe <- factor(round(last/d))
   result$flsa <- flsa
   calc.cost <- function(breaks){
-    bkpt.err(mu.break.after,breaks,last)
+    breakpointError(breaks,mu.break.after,last)
   }
   result$mu <- mu[locations]
   result$locations <- locations
@@ -26,7 +26,7 @@ sample.signal <- function(d){
     as.integer(floor((break.after+break.before)/2))
   })
   result$cost.details <- lapply(result$breaks,function(breaks){
-    bkpt.err.details(mu.break.after,breaks,last)
+    errorDetails(breaks,mu.break.after,last)
   })
   sumDetails <- function(component){
     sapply(result$cost.details,function(L)sum(L[[component]]))

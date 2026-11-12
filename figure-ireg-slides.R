@@ -185,7 +185,7 @@ p <- ggplot()+
   facet_grid(profile.id~chromosome,scales="free_x",space="free",
              labeller=plabs)+
   theme_bw()+
-  theme(panel.margin=unit(0,"lines"))+
+  theme(panel.spacing=unit(0,"lines"))+
   scale_fill_manual(values=c("1breakpoint"="#ff7d7d","0breakpoints"='#f6f4bf'))
 ## png("figure-annotations.png",2000,1600,res=200)
 ## print(p)

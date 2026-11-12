@@ -21,7 +21,7 @@ p <- ggplot(stat.df,aes(alpha,mean,group=beta))+
   scale_y_continuous("total breakpointError")+
   xlab("penalty exponent $\\alpha$")+
   theme_bw()+
-  theme(panel.margin=grid::unit(0, "cm"))
+  theme(panel.spacing=grid::unit(0, "cm"))
 ##print(p)
 
 what <- function(df){
@@ -50,7 +50,7 @@ ggplot()+
   ##         stat="contour")+
   facet_grid(.~what)+
   theme_grey()
-  ##theme_bw()+  theme(panel.margin=grid::unit(0, "cm"))
+  ##theme_bw()+  theme(panel.spacing=grid::unit(0, "cm"))
 
 
 pdf("figure-variable-size-error-alpha-beta.pdf",h=4,w=7)

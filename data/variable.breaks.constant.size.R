@@ -1,7 +1,8 @@
 ## experiment: calculate the breakpoint error and show the curve that
 ## demonstrates what exponent we need to pick for the signal length.
 
-source("data/precise.breakpoint.cost.R")
+#source("data/precise.breakpoint.cost.R")
+library(breakpointError)
 source("data/run.cghseg.R")
 
 
@@ -23,7 +24,7 @@ sample.signal <- function(until){
     floor((break.after+break.before)/2)
   })
   result$cost <- sapply(result$breaks,function(x){
-    bkpt.err(result$mu.breaks,x,last)
+    breakpointError(x,result$mu.breaks,last)
   })
   result$crit <- function(lambda,alpha){
     J <- result$J.est

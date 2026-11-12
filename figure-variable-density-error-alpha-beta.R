@@ -60,7 +60,7 @@ p <- ggplot(some.df,aes(alpha,mean, group=what))+
   ylab("total error relative to latent breaks")+
   xlab("penalty exponent $\\alpha$")+
   theme_bw()+
-  theme(panel.margin=grid::unit(0, "cm"))
+  theme(panel.spacing=grid::unit(0, "cm"))
 print(p)
 p <- ggplot(some.df,aes(alpha,mean, group=beta))+
   geom_ribbon(aes(ymin=ifelse(mean-sd<0,0,mean-sd),ymax=mean+sd),alpha=1/2)+
@@ -71,7 +71,7 @@ p <- ggplot(some.df,aes(alpha,mean, group=beta))+
   ylab("total error relative to latent breaks")+
   xlab("penalty exponent $\\alpha$")+
   theme_bw()+
-  theme(panel.margin=grid::unit(0, "cm"))
+  theme(panel.spacing=grid::unit(0, "cm"))
 print(p)
 alpha.zero <- subset(stat.df, alpha==0)
 p <- ggplot(alpha.zero,aes(beta,mean))+
@@ -82,7 +82,7 @@ p <- ggplot(alpha.zero,aes(beta,mean))+
   facet_grid(what ~ .,scales="free")+
   ylab("total error relative to latent breaks")+
   theme_bw()+
-  theme(panel.margin=grid::unit(0, "cm"))
+  theme(panel.spacing=grid::unit(0, "cm"))
 print(p)
 
 ##pdf("figure-variable-density-error-alpha.pdf",h=3)

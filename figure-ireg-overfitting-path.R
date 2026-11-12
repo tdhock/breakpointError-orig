@@ -45,7 +45,7 @@ p <- ggplot(,aes(-log10(gamma),coef))+
   ylab("")+
   xlab("model complexity $-\\log_{10}(\\gamma)$")+
   theme_bw()+
-  theme(panel.margin=unit(0,"cm"))+
+  theme(panel.spacing=unit(0,"cm"))+
   facet_grid(what~.,scales="free_y")
 ## install directlabels for nice lasso plot with variable names.
 library(directlabels)

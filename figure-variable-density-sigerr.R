@@ -180,7 +180,7 @@ plotCurves <- function(err.df){
                        limits=c(-1,22),breaks=c(1,5,7,20),
                        minor_breaks=NULL)+
     scale_y_continuous("error",minor_breaks=NULL)+
-    theme_bw()+theme(panel.margin=unit(0,"lines"))
+    theme_bw()+theme(panel.spacing=unit(0,"lines"))
 }
 
 full.levs <- c("Complete","Zero-one","Incomplete","Positive")

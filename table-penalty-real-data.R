@@ -1,4 +1,5 @@
-works_with_R("3.1.0", bams="1.0")
+library(bams)
+#works_with_R("3.1.0", bams="1.0")
 
 load("data/all.stats.RData")
 

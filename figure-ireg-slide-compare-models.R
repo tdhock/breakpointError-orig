@@ -55,7 +55,7 @@ p <- ggplot(toplot,aes(mean,model))+
   facet_grid(.~ann.set,scales="free")+
   xlab("percent test annotation error, mean +1 standard deviation")+
   theme_bw()+
-  theme(panel.margin=unit(0,"cm"))
+  theme(panel.spacing=unit(0,"cm"))
 
 pdf("figure-ireg-slide-compare-models.pdf",h=1.7,w=8)
 print(p)

@@ -26,7 +26,7 @@ ggplot(path,aes(alpha.2,alpha.1))+
   scale_x_continuous("",breaks=-10)+
   scale_y_continuous("",breaks=-10)+
   theme_bw()+
-  theme(panel.margin=unit(0,"cm"))
+  theme(panel.spacing=unit(0,"cm"))
 }
 library(tikzDevice);options(tikzDocumentDeclaration="\\documentclass[11pt]{memoir}",tikzMetricsDictionary="tikzMetrics")
 library(directlabels)

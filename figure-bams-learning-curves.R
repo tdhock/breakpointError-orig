@@ -78,7 +78,7 @@ p <- ggplot()+
   scale_linetype_manual(values=fp.fn.linetypes)+
   xlab("log10(smoothing parameter $\\lambda$)")+
   theme_bw()+ # bioinformatics
-  theme(panel.margin=unit(0,"lines"))+
+  theme(panel.spacing=unit(0,"lines"))+
   ylab("percent incorrectly predicted\nannotations in training set")
 print(p)
 

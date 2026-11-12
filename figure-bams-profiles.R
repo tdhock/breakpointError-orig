@@ -82,7 +82,7 @@ p <- p+
   ylab("logratio = approximate copy number")+
   facet_grid(display.id~chromosome,scales="free_x",space="free")+
   theme_bw()+
-  theme(panel.margin=unit(0,"lines"))
+  theme(panel.spacing=unit(0,"lines"))
 if(!is.null(lambda.name)){
   segs <- subset(seg.df,lname==lambda.name)
   brks <- subset(brk.df,lname==lambda.name)

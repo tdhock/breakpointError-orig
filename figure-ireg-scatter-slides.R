@@ -52,7 +52,7 @@ p <- ggplot(sub.df)+
   ylab(latex[[v]])+
   xlab("penalty exponent L")+
   theme_bw()+
-  theme(panel.margin=unit(0,"cm"))
+  theme(panel.spacing=unit(0,"cm"))
   regline <- geom_abline(aes(slope=1/slope,intercept=-intercept/slope),
                          data=line.df,colour="green",lwd=2)
   plots <- list(noline=p,line=p+regline)

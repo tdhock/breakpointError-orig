@@ -32,7 +32,7 @@ p <- ggplot(toplot)+
   ylab("")+
   xlab("penalty exponent L")+
   theme_bw()+
-  theme(panel.margin=unit(0,"cm"))
+  theme(panel.spacing=unit(0,"cm"))
 ##print(p)
 
 png("figure-ireg-scatter-noise-lambda.png",w=2000,h=2000,res=250)

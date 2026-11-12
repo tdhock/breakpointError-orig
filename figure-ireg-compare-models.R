@@ -67,7 +67,7 @@ p <- ggplot(toplot,aes(mean,model))+
   facet_grid(ann.set~stat,scales="free")+
   scale_x_continuous("mean +1 standard deviation",minor_breaks=NULL)+
   theme_bw()+
-  theme(panel.margin=unit(0,"cm"))+
+  theme(panel.spacing=unit(0,"cm"))+
   ylab("model\n")
 
 ##pdf("figure-ireg-compare-models.pdf",h=5)

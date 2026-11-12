@@ -53,7 +53,7 @@ p <- ggplot()+
   facet_grid(lambda~chromosome,scales="free_x",space="free",labeller=llab)+
   geom_line(aes(position/1e6,smooth),colour=smooth.col,size=1.5,data=smooth)+
   theme_bw()+ # bioinformatics
-  theme(panel.margin=unit(0,"lines"))
+  theme(panel.spacing=unit(0,"lines"))
 
 #pdf("figure-bams-smoothing.pdf",height=3.6,width=6)
 library(tikzDevice);options(tikzDocumentDeclaration="\\documentclass[11pt]{memoir}",tikzMetricsDictionary="tikzMetrics")

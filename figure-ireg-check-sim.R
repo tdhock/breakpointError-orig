@@ -47,7 +47,7 @@ p <- ggplot()+
   scale_fill_manual("annotation",values=annotation.colors)+
   scale_x_continuous("position")+
   facet_grid(profile.id~chromosome,scales="free_x",space="free")+
-  opts(panel.margin=unit(0,"lines"),
+  opts(panel.spacing=unit(0,"lines"),
        title="simulated data (points) with annotations (rectangles)")
 
 pdf("figure-ireg-check-sim.pdf")

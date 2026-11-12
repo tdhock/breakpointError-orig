@@ -8,7 +8,7 @@ p <- ggplot(,aes(position/1e6,logratio))+
   geom_point(data=pro)+
   facet_grid(.~chromosome,scales="free",space="free")+
   theme_bw()+
-  theme(panel.margin=unit(0,"in"))+
+  theme(panel.spacing=unit(0,"in"))+
   scale_x_continuous("position on chromosome (mega base pairs)",
                      breaks=c(100,200))
 
