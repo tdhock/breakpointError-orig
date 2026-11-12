@@ -407,7 +407,9 @@ The main subject of this paper is the breakpointError (defined in
 Section~\ref{sec:definition}), which is a function for precisely
 measuring the breakpoint detection accuracy of a segmentation
 model. There are several other approaches for evaluating segmentation
-models. \citet{zaid-lasso} compared the number of detected breakpoints
+models.
+The V-measure was proposed for evaluating clustering algorithms \citep{vmeasure}.
+\citet{zaid-lasso} compared the number of detected breakpoints
 with the number of true breakpoints, ignoring the positions of the
 breakpoints. A more precise method was proposed by
 \citet{perf-eval-framework}, who checked if the detected breakpoints
@@ -1780,7 +1782,29 @@ that even after thresholding and removing annotations, the annotation
 error function can still be used to identify a set of minimum error
 segmentation models (Figure~\ref{fig:variable-density-sigerr}).
 
-%\newpage
+% \newpage
+
+\section{Reproducibility analysis after 10 years}
+The first version of this work was a chapter in a PHD thesis, with minimal peer review by the PHD committee members \citep{HOCKING-phd-ch4}.
+Since then, minor updates were made in 2014, to support submission of a journal article, which was invited for a special issue of Journal de la société française de statistique (Journal of the French Statistical Society).
+After one round of peer review, a revised version was submitted, but the revisions were judged insufficient by the editor, so the paper was rejected.
+That paper was submitted and accepted on arXiv, with no peer review \citep{Hocking2015}.
+
+In 2026, the editor of JRepStat invited submission of a revised version with this new section on reproducibility.
+The goal of the reproducibility analysis is to re-do the computations required for making the figures and tables in the paper.
+Reproducibility should be possible in theory, because all the source code and data were made available on GitHub (\url{https://github.com/tdhock/breakpointError-orig}), alongside the arXiv submission in 2015.
+The main challenge to reproducibility is that the versions of the software used for the analysis have changed.
+For example, R version 3.1.0 was used in the 2015 code, whereas R version 4.6.2 is the current release as of Oct 2026.
+There are also new versions of lower level packages (for example, C compiler), and higher level packages (for example, ggplot2 for making figures).
+
+We adopted two strategies to achieve reproducibility.
+The first strategy for reproducibility was attempting to downgrade packages to the version that was used in 2015 (the R code contained notes about what versions of R and packages were used).
+This worked for several R packages (Segmentor3IsBack, bams, cghseg, changepoint), but did not always work for R itself.
+R version 3.1.0 fails to compile with new 2026 C compilers, which impose new checks and errors that did not exist in 2015.
+The second strategy for reproducibility was attempting to modify the figure/table code, so that it works with new software versions available in 2026.
+
+Although most R code works the same even after 10 years, there are two major changes that affect reproducibility.
+First, the default random number generation changed in R version 3.6.0 (2019); to use the older 
 
 \section{Conclusions and future work}
 
@@ -1809,15 +1833,7 @@ quantify breakpoint estimates, since it counts imprecision
 (\ref{eq:imprecision}) in addition to false positive and false
 negative breakpoint detections.
 
-TODO: compare with V-measure \citep{vmeasure}.
-
-To facilitate the use of the breakpointError in future work, it is
-implemented in the R package \verb|breakpointError| on R-Forge. It can
-be installed in R using
-
-\begin{verbatim}
-install.packages("breakpointError", repos="http://r-forge.r-project.org")
-\end{verbatim}
+To facilitate the use of the breakpointError in future work, we provide a free/open-source R package in the GitHub repository \url{https://github.com/tdhock/breakpointError}.
 
 \textbf{Acknowledgements}: Thanks to Marco Cuturi for references about
 distance functions for comparing probability distributions. Thanks to
