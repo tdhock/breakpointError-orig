@@ -1804,7 +1804,21 @@ R version 3.1.0 fails to compile with new 2026 C compilers, which impose new che
 The second strategy for reproducibility was attempting to modify the figure/table code, so that it works with new software versions available in 2026.
 
 Although most R code works the same even after 10 years, there are two major changes that affect reproducibility.
-First, the default random number generation changed in R version 3.6.0 (2019); to use the older 
+First, the default random number generation changed in R version 3.6.0 (2019); to use the older
+\newcommand{\cell}[1]{\parbox{1.4in}{\vspace{0.1cm} #1 \vspace{0.1cm}}}
+\begin{table}[!ht]
+    \centering
+    \begin{tabular}{|l|l|l|l|}
+    \hline
+        \textbf{Issue} & \textbf{Examples} & \textbf{Cause} & \textbf{Solution} \\ \hline
+        \cell{Package removed from CRAN} & \cell{Segmentor3IsBack, bams, cghseg} & \cell{Package no longer maintained} & \cell{use old version from CRAN Archive} \\ \hline
+        \cell{Original code errors\\using new version} & \cell{changepoint} & \cell{API change} & \cell{Use old version from CRAN Archive} \\ \hline
+        \cell{Original code errors\\using new version} & \cell{ggplot2} & \cell{API change} & \cell{Write code compatible with new version} \\ \hline
+        \cell{Old version\\did not install} & \cell{R, Segmentor3IsBack} & \cell{new compilers} & \cell{Use more recent version} \\ \hline
+        \cell{Results qualitatively consistent, \\but numbers different} & \cell{Several figures} & \cell{R random number\\generator changed} & \cell{RNGversion(``3.1.0'')} \\ \hline
+        \cell{Different figure details} & \cell{Facet order, \\missing data} & \cell{R stringsAsFactors\\default changed} & \cell{New code to specify\\factor levels} \\ \hline
+    \end{tabular}
+\end{table}
 
 \section{Conclusions and future work}
 
