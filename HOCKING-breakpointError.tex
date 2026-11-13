@@ -1784,42 +1784,6 @@ segmentation models (Figure~\ref{fig:variable-density-sigerr}).
 
 % \newpage
 
-\section{Reproducibility analysis after 10 years}
-The first version of this work was a chapter in a PHD thesis, with minimal peer review by the PHD committee members \citep{HOCKING-phd-ch4}.
-Since then, minor updates were made in 2014, to support submission of a journal article, which was invited for a special issue of Journal de la société française de statistique (Journal of the French Statistical Society).
-After one round of peer review, a revised version was submitted, but the revisions were judged insufficient by the editor, so the paper was rejected.
-That paper was submitted and accepted on arXiv, with no peer review \citep{Hocking2015}.
-
-In 2026, the editor of JRepStat invited submission of a revised version with this new section on reproducibility.
-The goal of the reproducibility analysis is to re-do the computations required for making the figures and tables in the paper.
-Reproducibility should be possible in theory, because all the source code and data were made available on GitHub (\url{https://github.com/tdhock/breakpointError-orig}), alongside the arXiv submission in 2015.
-The main challenge to reproducibility is that the versions of the software used for the analysis have changed.
-For example, R version 3.1.0 was used in the 2015 code, whereas R version 4.6.2 is the current release as of Oct 2026.
-There are also new versions of lower level packages (for example, C compiler), and higher level packages (for example, ggplot2 for making figures).
-
-We adopted two strategies to achieve reproducibility.
-The first strategy for reproducibility was attempting to downgrade packages to the version that was used in 2015 (the R code contained notes about what versions of R and packages were used).
-This worked for several R packages (Segmentor3IsBack, bams, cghseg, changepoint), but did not always work for R itself.
-R version 3.1.0 fails to compile with new 2026 C compilers, which impose new checks and errors that did not exist in 2015.
-The second strategy for reproducibility was attempting to modify the figure/table code, so that it works with new software versions available in 2026.
-
-Although most R code works the same even after 10 years, there are two major changes that affect reproducibility.
-First, the default random number generation changed in R version 3.6.0 (2019); to use the older
-\newcommand{\cell}[1]{\parbox{1.4in}{\vspace{0.1cm} #1 \vspace{0.1cm}}}
-\begin{table}[!ht]
-    \centering
-    \begin{tabular}{|l|l|l|l|}
-    \hline
-        \textbf{Issue} & \textbf{Examples} & \textbf{Cause} & \textbf{Solution} \\ \hline
-        \cell{Package removed from CRAN} & \cell{Segmentor3IsBack, bams, cghseg} & \cell{Package no longer maintained} & \cell{use old version from CRAN Archive} \\ \hline
-        \cell{Original code errors\\using new version} & \cell{changepoint} & \cell{API change} & \cell{Use old version from CRAN Archive} \\ \hline
-        \cell{Original code errors\\using new version} & \cell{ggplot2} & \cell{API change} & \cell{Write code compatible with new version} \\ \hline
-        \cell{Old version\\did not install} & \cell{R, Segmentor3IsBack} & \cell{new compilers} & \cell{Use more recent version} \\ \hline
-        \cell{Results qualitatively consistent, \\but numbers different} & \cell{Several figures} & \cell{R random number\\generator changed} & \cell{RNGversion(``3.1.0'')} \\ \hline
-        \cell{Different figure details} & \cell{Facet order, \\missing data} & \cell{R stringsAsFactors\\default changed} & \cell{New code to specify\\factor levels} \\ \hline
-    \end{tabular}
-\end{table}
-
 \section{Conclusions and future work}
 
 In this paper we defined the breakpointError, which can be used to
@@ -1853,6 +1817,91 @@ To facilitate the use of the breakpointError in future work, we provide a free/o
 distance functions for comparing probability distributions. Thanks to
 Guillem Rigaill for helpful comments on a preliminary version of this
 paper.
+\section{Reproducibility analysis after 10 years}
+
+The first version of this work was a chapter in a PHD thesis, with minimal peer review by the PHD committee members \citep{HOCKING-phd-ch4}.
+Since then, minor updates were made in 2014, to support submission of a journal article, which was invited for a special issue of Journal de la société française de statistique (Journal of the French Statistical Society).
+After one round of peer review, a revised version was submitted, but the revisions were judged insufficient by the editor, so the paper was rejected.
+That paper was submitted and accepted on arXiv, with no peer review \citep{Hocking2015}.
+
+\subsection{Goal and feasibility of reproducibility analysis}
+
+In 2026, the editor of JRepStat invited submission of a revised version with this new section on reproducibility.
+The goal of the reproducibility analysis is to re-do the computations required for making the figures and tables in the paper.
+For this paper, reproducibility means starting with raw data and code files, then re-doing the computations of the intermediate RData and output figure/table files (pdf, png, tex).
+If reproducibility is successful, then we should be able to re-compile the tex source of this paper, and obtain a pdf paper file with figures/tables which are the same as in the arXiv paper from 2015.
+
+Reproducibility should be possible in theory, because the source code was made available on GitHub \citep{breakpointError-orig}, alongside the arXiv submission in 2015.
+Additionally, the data files used to create the figures in the PHD thesis were used, and uploaded to zenodo for archival purposes \citep{zenodo2026}.
+
+\subsection{Issues and solutions for reproducibility}
+
+Our attempt at reproducibility was successful: we managed to re-make all of the figures/tables, and then re-compile the paper pdf file.
+Comparing the newly-compiled paper pdf file with the arXiv version from 2015, we observe no significant differences between corresponding result figures/tables.
+In Table~\ref{tab:reproducibility}, we summarize the issues that we encountered, and their solutions.
+
+The main challenge to reproducibility was that the versions of the software used for the analysis have changed.
+For example, R version 3.1.0 was used in the 2015 code, whereas R version 4.6.2 is the current release as of Oct 2026.
+There are also new versions of lower level packages (for example, C compiler), and higher level packages (for example, ggplot2 for making figures).
+We first tried running the original paper code with the new versions of dependent software, but that resulted in errors.
+
+We then attempted to downgrade packages to the version that was used in 2015 (the R code contained notes about what versions of R and packages were used).
+This worked for several R packages (Segmentor3IsBack, bams, cghseg, changepoint), but did not work for R itself.
+R version 3.1.0 fails to compile with new 2026 C compilers, which impose new checks and errors that did not exist in 2015.
+
+We then tried using the original code with the new version of base R, but that gave result figures which were inconsistent.
+Although most R code works the same even after 10 years, there were two major changes that affected our reproducibility analysis.
+First, the default random number generation changed, so we added \verb|RNGversion("3.1.0")| to tell R to use the old random number generator.
+Second, the default option for stringsAsFactors changed, which affected the order of panels in some figures.
+To fix this issue, we modified the figure code, to explicitly create factors with levels indicating the desired order of panels.
+Finally, the ggplot2 package changed its API for specifying panel labels, so we had to re-write some figure code to use the new API.
+Overall, it took about one afternoon of work to identify issues and corresponding solutions to enable reproducibility (Table~\ref{tab:reproducibility}).
+
+\newcommand{\cell}[1]{\parbox{1.4in}{\vspace{0.1cm} #1 \vspace{0.1cm}}}
+\begin{table}[t]
+    \centering
+    \begin{tabular}{|l|l|l|l|}
+    \hline
+        \textbf{Issue} & \textbf{Examples} & \textbf{Cause} & \textbf{Solution} \\ \hline
+        \cell{Package removed from CRAN} & \cell{Segmentor3IsBack, bams, cghseg} & \cell{Package no longer maintained} & \cell{Use old version\\from CRAN Archive} \\ \hline
+        \cell{Original code errors\\using new version} & \cell{changepoint} & \cell{API change} & \cell{Use old version\\from CRAN Archive} \\ \hline
+        \cell{Original code errors\\using new version} & \cell{ggplot2} & \cell{API change} & \cell{Write code compatible with new version} \\ \hline
+        \cell{Old version\\did not install} & \cell{R, Segmentor3IsBack} & \cell{new compilers} & \cell{Use more recent\\ version} \\ \hline
+        \cell{Results qualitatively consistent, \\but numbers different} & \cell{Several figures} & \cell{R random number\\generator changed} & \cell{RNGversion(``3.1.0'')} \\ \hline
+        \cell{Different figure details} & \cell{Facet order, \\missing data} & \cell{R stringsAsFactors\\default changed} & \cell{New code to specify\\factor levels} \\ \hline
+    \end{tabular}
+    \caption{\label{tab:reproducibility}
+      During reproducibility analysis, we encountered several issues, and adopted a variety of solutions.
+      Each row summarizes a combination of issue, cause, and solution.
+      }
+\end{table}
+
+\subsection{Conclusions and recommendations for reproducibility}
+
+This reproducibility analysis revealed several lessons that will be useful in other projects.
+
+\textbf{Archive code and data.}
+Most importantly, research papers should make their code and data publicly available in an archival service.
+Our code from 2015 was archived on GitHub, which is still maintained and publicly available after 10 years.
+Larger data files should be submitted to a research data archival service such as Zenodo.
+
+\textbf{Document versions of packages required for analyses.}
+At the time of publication, document the version number of each software package used. 
+Our code from 2015 included notes about the versions used, for base R, and for R packages.
+These versions were important for reproducing pseudo-random number generation, and for obtaining old versions of some R packages.
+
+\textbf{Modify paper code for newer software.}
+When attempting reproducibility, the original paper code may need modifications to work with new software versions.
+We were unable to install the 2015 versions of some software such as R and ggplot2, so we instead attempted reproducibility with the newer 2026 versions.
+After modifying the figure/table code for our paper, we were able to achieve reproducibility.
+This was the most time-consuming step of our reproducibility analysis.
+
+\textbf{Summary and recommendations.}
+For reproducibility of future research projects, we would recommend the following workflow.
+Upon publication, submit code and data files to an archival service, and document dependent software version numbers.
+When attempting to reproduce the analyses, first try to re-run the original paper code with new software versions.
+If that does not work, try installing old software versions (if they were documented in the original paper code).
+A last resort would be modifying the paper code so that it works with new software versions.
 
 \bibliographystyle{abbrvnat}
 \bibliography{refs}
